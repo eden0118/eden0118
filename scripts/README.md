@@ -23,9 +23,11 @@ Source images are kept intact.
 
 `scripts/design-cover-template.svg` controls the cover typography and layout.
 `scripts/practice_art.py` generates the four explanatory diagrams. Assets are
-regenerated when source images or scripts are pushed, or by running the
-**Update profile art** workflow manually. No daily job or contribution request
-is needed.
+generated locally with the commands above and committed together with source
+changes. The **Check profile art** workflow validates committed assets, runs the
+generator in its temporary runner, and checks the result on pushes, pull
+requests, or manual runs. It has read-only repository permissions and never
+commits or pushes generated files. No daily job or contribution request is needed.
 
 The artwork adapts to the viewer's color scheme. Reduced-motion preferences
 show the first complete illustration and static diagrams. Static SVG renderers
