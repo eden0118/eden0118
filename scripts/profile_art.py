@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
-"""Generate lightweight profile artwork from the four source illustrations."""
+"""Generate a continuous native SVG carousel and lightweight profile diagrams."""
 import argparse
-import base64
-from functools import lru_cache
-import io
+import html
 from pathlib import Path
 import random
 import re
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
 from practice_art import diagrams
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ('design.png', 'need-sleep.png', 'working.png', 'drink.png')
-FRAMES, FRAME_MS, HOLD_MS = 72, 50, 3400
-COLS, ROWS = 100, 96
-SIZE, SCALE = (300, 286), 2
-TONES = 4
+COLS, ROWS, BANDS = 100, 96, 8
+SLIDE_SECONDS = 7
 RAMP = ' .:-=+*#'
-ASCII_FONT = ImageFont.load_default(size=8)
 
 
 def ascii_lines(source, cols=100, rows=96):
@@ -55,105 +49,81 @@ def dark_variant(svg):
     return re.sub(r"#[0-9a-fA-F]{6}", lambda match: palette.get(match[0].lower(), match[0]), svg)
 
 
-@lru_cache(maxsize=8192)
-def render_row(line):
-    """Cache small monochrome strips; glyph positions use a fixed ASCII grid."""
-    strip = Image.new('L', (SIZE[0] * SCALE, 10), 0)
-    draw = ImageDraw.Draw(strip)
-    for col, character in enumerate(line):
-        if character != ' ':
-            x = (24 + col * 792 / COLS) * SIZE[0] / 840 * SCALE
-            draw.text((x, 0), character, fill=255, font=ASCII_FONT)
-    return strip
+def timeline(attribute, points, cycle):
+    """Interpolate on one shared clock; no discrete frame swapping."""
+    ordered = sorted(dict(points).items())
+    times = ';'.join(f'{seconds/cycle:.8f}' for seconds, _ in ordered)
+    values = ';'.join(f'{value:g}' for _, value in ordered)
+    return (f'<animate attributeName="{attribute}" values="{values}" keyTimes="{times}" '
+            f'calcMode="linear" dur="{cycle:g}s" repeatCount="indefinite"/>')
 
 
-def render_mask(lines):
-    mask = Image.new('L', (SIZE[0] * SCALE, SIZE[1] * SCALE), 0)
-    for row, line in enumerate(lines):
-        y = round((24 + row * 736 / ROWS) * SIZE[1] / 800 * SCALE)
-        strip = render_row(line)
-        # Maximum compositing preserves glyph edges where strips overlap.
-        area = mask.crop((0, y, strip.width, y + strip.height))
-        mask.paste(ImageChops.lighter(area, strip), (0, y))
-    return mask.resize(SIZE, Image.Resampling.LANCZOS).point(
-        [round(value * (TONES - 1) / 255) for value in range(256)], mode='P')
+def text_rows(lines, ink):
+    return ''.join(
+        f'<text x="24" y="{32+row*736/ROWS:.2f}" fill="{ink}" font-size="10.2" '
+        f'xml:space="preserve" textLength="792" lengthAdjust="spacingAndGlyphs">'
+        f'{html.escape(line)}</text>' for row, line in enumerate(lines))
 
 
-def carousel_frames(sources):
-    frames, durations = [], []
+def portrait(sources, dark):
+    cycle = len(sources) * SLIDE_SECONDS
+    ink = '#b7cdc8' if dark else '#30383b'
+    parts = ['<style>.portrait-glyphs{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}'
+             '@media(prefers-reduced-motion:reduce){.portrait-scene{display:none!important}'
+             '.portrait-first{display:inline!important;opacity:1!important}'
+             '.portrait-final{clip-path:none!important}.portrait-noise{display:none!important}}</style>']
     for slide, source in enumerate(sources):
         lines = ascii_lines(source, COLS, ROWS)
         rng = random.Random(18 + slide)
-        timing = [[(rng.uniform(0, .38), rng.uniform(.42, .98))
-                   for _ in range(COLS)] for _ in range(ROWS)]
-        for frame in range(FRAMES):
-            progress = (frame + 1) / FRAMES
-            changing = []
-            for row, line in enumerate(lines):
-                characters = []
-                for col, target in enumerate(line):
-                    arrival, settled = timing[row][col]
-                    if target == ' ' or progress < arrival:
-                        characters.append(' ')
-                    elif progress >= settled:
-                        characters.append(target)
-                    else:
-                        index = RAMP.index(target)
-                        variants = RAMP[max(1, index - 2):min(len(RAMP), index + 3)]
-                        characters.append(rng.choice(variants))
-                changing.append(''.join(characters))
-            frames.append(render_mask(changing))
-            durations.append(FRAME_MS)
-        frames.append(render_mask(lines))
-        durations.append(HOLD_MS)
-    return frames, durations, render_mask(ascii_lines(sources[0], COLS, ROWS))
-
-
-def palette(dark):
-    background, ink = ((13, 17, 23), (183, 205, 200)) if dark else ((250, 250, 250), (48, 56, 59))
-    colors = [round(background[channel] + (ink[channel] - background[channel]) * level / (TONES - 1))
-              for level in range(TONES) for channel in range(3)]
-    return colors + [0] * (768 - len(colors))
-
-
-def cover(template, frames, durations, still, dark):
-    colored = []
-    for frame in frames:
-        frame = frame.copy()
-        frame.putpalette(palette(dark))
-        colored.append(frame)
-    animation = io.BytesIO()
-    colored[0].save(animation, format='GIF', save_all=True, append_images=colored[1:],
-                    duration=durations, loop=0, optimize=True, disposal=1)
-    still = still.copy()
-    still.putpalette(palette(dark))
-    poster = io.BytesIO()
-    still.save(poster, format='PNG', optimize=True)
-    gif = base64.b64encode(animation.getvalue()).decode('ascii')
-    png = base64.b64encode(poster.getvalue()).decode('ascii')
-    portrait = ('<style>.portrait-still{display:none}'
-                '@media(prefers-reduced-motion:reduce){.portrait-motion{display:none!important}.portrait-still{display:inline!important}}</style>'
-                f'<image class="portrait-motion" width="840" height="800" href="data:image/gif;base64,{gif}"/>'
-                f'<image class="portrait-still" width="840" height="800" href="data:image/png;base64,{png}"/>')
-    return (dark_variant(template) if dark else template).replace('{PORTRAIT}', portrait)
+        noise = [''.join(rng.choice(RAMP[max(1, RAMP.index(c)-1):min(len(RAMP), RAMP.index(c)+2)])
+                         if c != ' ' else ' ' for c in line) for line in lines]
+        parts.append(f'<defs><g id="pose-{slide}" class="portrait-glyphs">{text_rows(lines, ink)}</g>'
+                     f'<g id="noise-{slide}" class="portrait-glyphs">{text_rows(noise, ink)}</g></defs>')
+        offset = slide * SLIDE_SECONDS
+        delays = [0, .35, .1, .65, .2, .8, .45, .05]
+        parts.append(f'<clipPath id="reveal-{slide}">')
+        for band, delay in enumerate(delays):
+            x, width = 24 + band * 99, 99
+            begin, finish = offset + delay, offset + delay + 2.8
+            parts.append(f'<rect x="{x}" y="16" width="{width}" height="764" data-band="{band}">')
+            parts.append(timeline('width', [(0, 0), (begin, 0), (finish, width), (cycle, width)], cycle))
+            if band % 2:
+                parts.append(timeline('x', [(0, x+width), (begin, x+width), (finish, x), (cycle, x)], cycle))
+            parts.append('</rect>')
+        parts.append('</clipPath>')
+        first = ' portrait-first' if slide == 0 else ''
+        parts.append(f'<g class="portrait-scene{first}" opacity="{1 if slide == 0 else 0}" data-scene="{html.escape(source.stem)}">')
+        if slide == 0:
+            visibility = [(0, 0), (.25, 1), (6.6, 1), (7, 0), (cycle, 0)]
+        else:
+            visibility = [(0, 0), (offset-.3, 0), (offset, 1),
+                          (offset+6.6, 1), (offset+7, 0), (cycle, 0)]
+        parts.append(timeline('opacity', visibility, cycle))
+        parts.append(f'<use class="portrait-noise" href="#noise-{slide}" opacity="0">')
+        parts.append(timeline('opacity', [(0, 0), (offset, .16), (offset+.35, .23),
+                                        (offset+1.8, 0), (cycle, 0)], cycle))
+        parts.append('</use>')
+        parts.append(f'<use class="portrait-final" href="#pose-{slide}" clip-path="url(#reveal-{slide})"/>')
+        parts.append('</g>')
+    return ''.join(parts)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--portrait', type=Path, nargs='+',
-                        default=[ROOT / name for name in SOURCES],
-                        help='Source illustrations in carousel order')
+                        default=[ROOT / name for name in SOURCES])
     args = parser.parse_args()
-    frames, durations, still = carousel_frames(args.portrait)
     template = (ROOT / 'scripts/design-cover-template.svg').read_text()
     output = diagrams()
     for name, svg in list(output.items()):
         output[name.replace('.svg', '-dark.svg')] = dark_variant(svg)
-    output['assets/design-cover.svg'] = cover(template, frames, durations, still, False)
-    output['assets/design-cover-dark.svg'] = cover(template, frames, durations, still, True)
+    for dark in (False, True):
+        suffix = '-dark' if dark else ''
+        base = dark_variant(template) if dark else template
+        output[f'assets/design-cover{suffix}.svg'] = base.replace('{PORTRAIT}', portrait(args.portrait, dark))
     for name, content in output.items():
         (ROOT / name).write_text(content)
-    print(f'Generated {len(output)} assets: {len(args.portrait)} scenes, 20 fps, {sum(durations)/1000:g}s loop')
+    print(f'Generated {len(output)} assets: native continuous SVG motion, {len(args.portrait)*SLIDE_SECONDS}s loop')
 
 
 if __name__ == '__main__':
