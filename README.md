@@ -1,1 +1,20 @@
-<img src="./assets/profile-card.svg" width="720" alt="Eden Chang — Technical Product Manager. Background: industrial design, metalwork, and exhibition planning. Working practices: product planning, user experience, collaboration, and front-end development. A retro pixel dossier with a cyan character portrait." />
+# Eden Chang
+
+> Technical Product Manager
+
+|                                                                                                    | Background                                                                |
+| :------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------ |
+| <img src="./assets/profile-avatar.svg" width="320" alt="Cyan pixel character drawing at a desk" /> | **Industrial design**<br><br>**Metalwork**<br><br>**Exhibition planning** |
+
+## Working practice
+
+|                                                       Planning                                                       |                                                User experience                                                |
+| :------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
+| <img src="./assets/practice-planning.svg" width="320" alt="Loose requirements organized into a product structure" /> | <img src="./assets/practice-experience.svg" width="320" alt="Connected interface screens and user actions" /> |
+
+|                                                   Collaboration                                                    |                                                     Front-end                                                      |
+| :----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
+| <img src="./assets/practice-collaboration.svg" width="320" alt="Three perspectives converge into a shared plan" /> | <img src="./assets/practice-frontend.svg" width="320" alt="An interface connected to implementation components" /> |
+|                                           Users · Business · Engineering                                           |                                                                                                                    |
+
+_Curious builder._

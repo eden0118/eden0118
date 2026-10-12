@@ -1,11 +1,15 @@
 # Profile artwork
 
-The README is a single retro electronic dossier: pixel lettering, a cyan
-ordered-dither character portrait, and four static diagrams on a shared grid.
-The card keeps the same dark palette in both GitHub color schemes. The existing
-`design.png` supplies the character; no generated portrait or external font is needed.
+All visible profile text lives in `README.md`: the name, role, background,
+working-practice headings, collaboration perspectives, and closing line. Edit
+those directly without regenerating any images. Native Markdown headings,
+blockquote, tables, bold text, and italics provide the layout.
 
-## Generate
+Only the character and four diagrams are SVG images. They keep the cyan pixel
+style while GitHub supplies the text font, table borders, and theme colors.
+`assets/design.png` supplies the character. Other source images remain intact.
+
+## Generate graphics
 
 ```sh
 python3 -m venv /tmp/eden-profile-venv
@@ -14,18 +18,13 @@ python3 -m venv /tmp/eden-profile-venv
 python3 scripts/check_art.py
 ```
 
-`scripts/design-cover-template.svg` defines the card frame and one-shot startup
-pulse. `scripts/profile_art.py` contains the embedded 5×7 pixel alphabet and the
-ordered-dither portrait converter. `scripts/practice_art.py` draws the four
-working practices. Generation is deterministic and writes `assets/profile-card.svg`.
-Source images remain intact.
+`scripts/profile_art.py` generates the ordered-dither character.
+`scripts/practice_art.py` generates the four graphic-only diagrams.
+Generation is deterministic and does not modify README text. The SVGs have no
+visible text, animation, JavaScript, raster embeds, or external font dependencies.
 
-The startup overlay fades out within 0.8 seconds and never repeats. Reduced-motion
-preferences hide it entirely. Static renderers show the complete card. There is
-no JavaScript, raster image embed, network request, or external font dependency.
-The image's alt text and SVG title/description provide a text equivalent.
-
-`preview.html` approximates GitHub's image display on desktop and mobile. The
-**Check profile art** workflow validates the SVG and its references, regenerates
-it, and validates the output. Checks enforce an asset size budget, four practices,
-unique identifiers, a single finite animation, and no unused artwork.
+`preview.html` is a static preview of the current Markdown using approximate
+GitHub styles; it does not automatically update when README text is edited.
+Use your editor's Markdown preview or GitHub's preview for subsequent text edits.
+The **Check profile art** workflow validates referenced assets and regenerated
+output, including size budgets, unique identifiers, and absence of visible SVG text.

@@ -31,10 +31,9 @@ def experience():
 
 def collaboration():
     parts = []
-    for y, text in [(13, 'Users'), (49, 'Business'), (85, 'Engineering')]:
-        parts += [f'<text x="0" y="{y}" font-size="17">{text}</text>', route(f'M116 {y-5}H130L164 46', True)]
-    parts += [box(184, 19, 83, 55, True), '<text x="225" y="43" font-size="15" text-anchor="middle">Shared</text>',
-              '<text x="225" y="62" font-size="15" text-anchor="middle">plan</text>']
+    for y in [0, 36, 72]:
+        parts += [box(0, y, 95, 25), route(f'M105 {y+12}H125L163 48', True)]
+    parts += [box(184, 21, 83, 55, True), route('M197 38H254M197 49H241M197 60H250')]
     return ''.join(parts)
 
 
@@ -44,11 +43,16 @@ def frontend():
                     route('M184 33V56H252V33M218 56V78'), box(197, 78, 42, 24, True)])
 
 
-def panels(pixel_text):
-    rows = [('structure', 40, 554, 'PLANNING', planning),
-            ('journey', 380, 554, 'USER EXPERIENCE', experience),
-            ('alignment', 40, 780, 'COLLABORATION', collaboration),
-            ('delivery', 380, 780, 'FRONT-END', frontend)]
-    return ''.join(f'<g data-stage="{name}">' + pixel_text(x, y, title, 2.5)
-                   + f'<g transform="translate({x},{y+55})">' + renderer() + '</g></g>'
-                   for name, x, y, title, renderer in rows)
+def diagrams():
+    renderers = {'planning': planning, 'experience': experience, 'collaboration': collaboration, 'frontend': frontend}
+    output = {}
+    for name, renderer in renderers.items():
+        output[f'assets/practice-{name}.svg'] = (
+            '<svg xmlns="http://www.w3.org/2000/svg" width="336" height="160" viewBox="0 0 336 160" role="img">'
+            f'<title>{name.capitalize()} diagram</title>'
+            '<defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">'
+            '<path d="M0 0L6 3L0 6" fill="#7d9fa6"/></marker></defs>'
+            '<rect width="336" height="160" fill="#101e23"/>'
+            '<path d="M4 14V4H14M322 4H332V14M4 146V156H14M322 156H332V146" fill="none" stroke="#617f86"/>'
+            '<g transform="translate(32,29)">' + renderer() + '</g></svg>')
+    return output
