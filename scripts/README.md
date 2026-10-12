@@ -47,3 +47,6 @@ Each character has an independent arrival and settling time across the whole
 image. SMIL runs without JavaScript. Reduced motion and static renderers show
 the complete first illustration. Fixed random seeds avoid daily random churn.
 To change the order, edit the --portrait list in the workflow and regenerate.
+
+The lower caption in working.png is cropped out during ASCII conversion.
+The source image is preserved.

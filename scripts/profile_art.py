@@ -141,6 +141,9 @@ def stats_card(days, stats):
 def ascii_lines(source, cols=100, rows=96):
     from PIL import Image, ImageChops, ImageEnhance, ImageOps
     image = Image.open(source).convert("RGB")
+    if source.name == "working.png":
+        # The bottom caption sits below the illustration in this source image.
+        image = image.crop((0, 0, image.width, round(image.height * .84)))
     difference = ImageChops.difference(image, Image.new("RGB", image.size, "white"))
     bounds = difference.convert("L").point(lambda value: 255 if value > 35 else 0).getbbox()
     if bounds:
