@@ -138,10 +138,9 @@ def stats_card(days, stats):
     return "".join(parts) + "</svg>"
 
 
-def portrait(source, dark=False):
+def ascii_lines(source, cols=100, rows=96):
     from PIL import Image, ImageChops, ImageEnhance, ImageOps
     image = Image.open(source).convert("RGB")
-    # Trim only exterior paper margins; keep the person, cat, and laptop together.
     difference = ImageChops.difference(image, Image.new("RGB", image.size, "white"))
     bounds = difference.convert("L").point(lambda value: 255 if value > 35 else 0).getbbox()
     if bounds:
@@ -149,56 +148,76 @@ def portrait(source, dark=False):
         margin = round(max(x1 - x0, y1 - y0) * .035)
         image = image.crop((max(0, x0 - margin), max(0, y0 - margin),
                             min(image.width, x1 + margin), min(image.height, y1 + margin)))
-    cols, rows = 100, 96
-    image = ImageOps.fit(image.convert("L"), (cols, rows))
+    # Pad rather than crop so each illustration keeps its full composition.
+    image = ImageOps.pad(image.convert("L"), (cols, rows), color="white")
     image = ImageEnhance.Contrast(image).enhance(1.2)
     ramp = " .:-=+*#"
+    return ["".join(ramp[round((255 - image.getpixel((col, row))) / 255 * (len(ramp) - 1))]
+                    for col in range(cols)) for row in range(rows)]
+
+
+def portrait(sources, dark=False):
+    cols, rows = 100, 96
+    ramp = " .:-=+*#"
+    frames, interval, hold = 24, .15, 3.4
+    typing = frames * interval
+    slide_duration = typing + hold
+    cycle = len(sources) * slide_duration
     background, ink = ("#0d1117", "#b7cdc8") if dark else ("#fafafa", "#30383b")
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img">',
-             '<title>Eden / animated ASCII character study</title>',
-             '<desc>Eden and a cat stretching beside a laptop, formed by changing ASCII characters.</desc>',
-             '<style>@media(prefers-reduced-motion:reduce){.scramble-frame{display:none!important}.portrait-final{opacity:1!important}}</style>',
+             '<title>Eden / ASCII illustration carousel</title>',
+             '<desc>Designing, needing sleep, working, and drinking bubble tea, rotating with a character typing effect.</desc>',
+             '<style>@media(prefers-reduced-motion:reduce){.carousel-frame{display:none!important}.portrait-fallback{display:inline!important;opacity:1!important}}</style>',
              f'<rect width="840" height="800" fill="{background}"/>']
-    lines = ["".join(ramp[round((255 - image.getpixel((col, row))) / 255 * (len(ramp) - 1))]
-                     for col in range(cols)) for row in range(rows)]
-    # Each character has its own arrival and settling time across the whole image.
-    # Frames are generated ahead of time: embedded SVGs need no JavaScript.
-    rng = random.Random(18)
-    timing = [[(rng.uniform(0, .38), rng.uniform(.42, .98)) for _ in range(cols)]
-              for _ in range(rows)]
-    frames, interval = 24, .15
     step = 736 / rows
 
-    def render_lines(frame_lines):
+    def render_lines(lines):
         return "".join(text(24, round(32 + row * step, 2), line, 10.2, ink,
                             'xml:space="preserve" textLength="792" lengthAdjust="spacingAndGlyphs"')
-                       for row, line in enumerate(frame_lines))
+                       for row, line in enumerate(lines))
 
-    # The final artwork is the static fallback. Hide it only during playback.
-    parts.append('<g class="portrait-final">')
-    parts.append(f'<set attributeName="opacity" to="0" begin="0s" dur="{frames * interval:.2f}s"/>')
-    parts.append(render_lines(lines))
-    parts.append('</g>')
-    for frame in range(frames):
-        progress = (frame + 1) / frames
-        frame_lines = []
-        for row, line in enumerate(lines):
-            chars = []
-            for col, target in enumerate(line):
-                arrival, settled = timing[row][col]
-                if target == " " or progress < arrival:
-                    chars.append(" ")
-                elif progress >= settled:
-                    chars.append(target)
-                else:
-                    index = ramp.index(target)
-                    # Similar density keeps the illustration recognizable as it types.
-                    variants = ramp[max(1, index - 2):min(len(ramp), index + 3)]
-                    chars.append(rng.choice(variants))
-            frame_lines.append("".join(chars))
-        parts.append(f'<g class="scramble-frame" opacity="0"><set attributeName="opacity" to="1" begin="{frame * interval:.2f}s" dur="{interval:.2f}s"/>')
-        parts.append(render_lines(frame_lines))
+    def active_window(start, end):
+        # All groups share one repeating clock, avoiding drift after each loop.
+        if start == 0:
+            values, times = "1;0;0", f"0;{end / cycle:.8f};1"
+        elif end == cycle:
+            values, times = "0;1;1", f"0;{start / cycle:.8f};1"
+        else:
+            values, times = "0;1;0;0", f"0;{start / cycle:.8f};{end / cycle:.8f};1"
+        return f'<animate attributeName="opacity" values="{values}" keyTimes="{times}" calcMode="discrete" dur="{cycle:.2f}s" repeatCount="indefinite"/>'
+
+    for slide, source in enumerate(sources):
+        lines = ascii_lines(source, cols, rows)
+        rng = random.Random(18 + slide)
+        timing = [[(rng.uniform(0, .38), rng.uniform(.42, .98)) for _ in range(cols)]
+                  for _ in range(rows)]
+        offset = slide * slide_duration
+        fallback = slide == 0
+        classes = "carousel-frame portrait-fallback" if fallback else "carousel-frame"
+        parts.append(f'<g class="{classes}" opacity="{1 if fallback else 0}" data-scene="{html.escape(source.stem)}" data-phase="hold">')
+        parts.append(active_window(offset + typing, (slide + 1) * slide_duration))
+        parts.append(render_lines(lines))
         parts.append('</g>')
+        for frame in range(frames):
+            progress = (frame + 1) / frames
+            frame_lines = []
+            for row, line in enumerate(lines):
+                chars = []
+                for col, target in enumerate(line):
+                    arrival, settled = timing[row][col]
+                    if target == " " or progress < arrival:
+                        chars.append(" ")
+                    elif progress >= settled:
+                        chars.append(target)
+                    else:
+                        index = ramp.index(target)
+                        variants = ramp[max(1, index - 2):min(len(ramp), index + 3)]
+                        chars.append(rng.choice(variants))
+                frame_lines.append("".join(chars))
+            parts.append(f'<g class="carousel-frame" opacity="0" data-scene="{html.escape(source.stem)}" data-phase="typing" data-frame="{frame}">')
+            parts.append(active_window(offset + frame * interval, offset + (frame + 1) * interval))
+            parts.append(render_lines(frame_lines))
+            parts.append('</g>')
     return "".join(parts) + "</svg>"
 
 
@@ -219,7 +238,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--username", default="eden0118")
     parser.add_argument("--html", type=Path, help="Use a saved GitHub calendar instead of fetching")
-    parser.add_argument("--portrait", type=Path, help="Also regenerate the ASCII portrait")
+    parser.add_argument("--portrait", type=Path, nargs="+", help="Illustrations to rotate in the ASCII carousel, in order")
     args = parser.parse_args()
     if args.html:
         calendar_html = args.html.read_text()
