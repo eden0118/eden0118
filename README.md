@@ -14,8 +14,6 @@
 
 <br>
 
-<a href="https://github.com/eden0118"><img src="https://img.shields.io/badge/GitHub-eden0118-0d1117?style=for-the-badge&logo=github&logoColor=aa9bef" alt="GitHub: eden0118"></a>
-
 </div>
 
 ---
