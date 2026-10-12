@@ -63,7 +63,8 @@ def typewriter(rows, t):
 
 
 def banner(data, t):
-    p = start(1180, 610, 'Eden Chang · profile.sh --live', 'Terminal profile with an ASCII character drawing at a desk, and information about Eden Chang, Technical Product Manager.', t)
+    description = ' '.join(data['intro']) + ' How I work: ' + ' '.join(f'{item["name"]}: {item["description"]}' for item in data['strengths'])
+    p = start(1180, 610, 'Eden Chang · profile.sh --live', description, t)
     p += [f'<rect x="14" y="14" width="1152" height="582" rx="14" fill="{t["panel"]}" stroke="{t["line"]}"/>',
           f'<path d="M14 62H1166" stroke="{t["line"]}"/>']
     for x, color in [(38, '#ff5f57'), (59, '#febc2e'), (80, '#28c840')]:
@@ -75,10 +76,18 @@ def banner(data, t):
     p += [text('ASCII / 120x76', 437, 111, t['muted'], 11, 'end'), text('@'+data['handle'], 1128, 111, t['accent'], 13, 'end')]
     p.append(typewriter(ascii_portrait(), t))
     p += [f'<path d="M49 150v-12h12M427 138h12v12M49 521v12h12M427 533h12v-12" fill="none" stroke="{t["accent"]}"/>', text('CHARACTER / ASCII DENSITY MAP', 58, 550, t['muted'], 10)]
-    fields = [('Subject',data['subject']), ('Role',data['role']), ('Background.01', data['background'][0]), ('Background.02', data['background'][1]), ('Background.03',data['background'][2]), ('Practice.01',data['practice'][0]), ('Practice.02',data['practice'][1]), ('Practice.03',data['practice'][2]), ('Practice.04',data['practice'][3]), ('Perspective.01','Users'), ('Perspective.02','Business'), ('Perspective.03','Engineering'), ('Grid.GitHub',data['handle']), ('Status','Curious builder')]
+    fields = [('Subject', data['subject']), ('Role', data['role'])]
     for i, (key, value) in enumerate(fields):
         y = 153+i*24
         p += [text(key, 491, y, t['muted']), f'<path d="M628 {y-4}H{1116-len(value)*8.5}" stroke="{t["line"]}" stroke-dasharray="1 4"/>', text(value, 1128, y, t['text'], anchor='end')]
+    for i, line in enumerate(data['intro']):
+        p.append(text(line, 491, 209+i*20, t['muted'], 13))
+    p.append(f'<path d="M491 269H1128" stroke="{t["line"]}"/>')
+    p.append(text('HOW I WORK', 491, 291, t['accent'], 12, weight='600'))
+    for i, item in enumerate(data['strengths']):
+        y = 320+i*49
+        p.append(text(item['name'], 491, y, t['text'], 14, weight='600'))
+        p.append(text(item['description'], 491, y+19, t['muted'], 13))
     p += [f'<path d="M491 524H1128" stroke="{t["line"]}"/>',text('● BUILDING / LEARNING / EXPLORING',491,548,t['green'],11), text('PRODUCT DEVELOPMENT',1128,548,t['muted'],11,'end'), '</svg>']
     return ''.join(p)
 

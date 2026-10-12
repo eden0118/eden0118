@@ -5,6 +5,7 @@ from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from practice_art import diagrams
 from dossier_art import dossier
 from terminal_art import graphics
+from preview import write_preview
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -41,6 +42,7 @@ def main():
     output = {'assets/profile-avatar.svg': avatar, 'assets/profile-dossier.svg': dossier(), **diagrams(), **graphics()}
     for name, content in output.items():
         (ROOT / name).write_text(content)
+    write_preview()
     print(f'Generated {len(output)} assets, including the pixel identity card')
 
 

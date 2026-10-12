@@ -26,5 +26,28 @@
     "as_of": "2026-10-12",
     "source": "https://api.github.com/users/eden0118",
     "repos_source": "https://api.github.com/users/eden0118/repos?per_page=100&sort=updated"
-  }
+  },
+  "intro": [
+    "Hi, I'm Eden, a technical product manager.",
+    "My background: industrial design, metalwork and exhibition planning.",
+    "I connect product planning, user experience and front-end implementation."
+  ],
+  "strengths": [
+    {
+      "name": "Problem framing",
+      "description": "Turn scattered requirements into a clear problem and direction."
+    },
+    {
+      "name": "Empathy",
+      "description": "Understand people's goals before deciding what to build."
+    },
+    {
+      "name": "Cross-functional communication",
+      "description": "Connect users, business and engineering around a shared plan."
+    },
+    {
+      "name": "Structured thinking",
+      "description": "Make ideas concrete through workflows, priorities and next steps."
+    }
+  ]
 }

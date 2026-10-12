@@ -1,6 +1,6 @@
 # Profile artwork
 
-The README follows the terminal-banner, introduction, stack, signals and stats
+The README follows the terminal-banner, introduction and signals
 layout of [emmi-lili](https://github.com/emmi-lili). Graphics are original and use
 Eden's existing character and profile information.
 
@@ -8,7 +8,10 @@ The banner has a real ASCII portrait generated from `assets/design.png` using
 120 columns and 76 rows of density characters. `scripts/terminal_art.py` renders
 the ASCII lettering into an SVG terminal alongside profile details. Both light
 and dark assets are local and self-contained. GitHub selects the theme through
-`picture` elements. Stack icons and the GitHub badge use external image services.
+`picture` elements. `SYSTEM.INFO` contains the introduction and “how I work”
+strengths: problem framing, empathy, communication and structured thinking.
+Edit their wording in the `intro` and `strengths` fields of `assets/profile.json`.
+README supplies an image text alternative rather than duplicating these sections.
 
 `VISUAL.MAP` types the ASCII portrait from left to right, one row at a time.
 Each 10-second cycle waits 0.5 seconds, types for 3.5 seconds, and holds the
@@ -20,8 +23,11 @@ the complete portrait without animation. Without CSS support, it is also static.
 ## Update profile data
 
 Edit `assets/profile.json` to change the banner fields and chart data. Edit the
-prose in `README.md` separately. `preview.html` is a static local preview of the
-README; keep it in sync when changing the profile text or image references.
+prose in `README.md` separately. `preview.html` is generated directly from README
+using a CommonMark parser, including its embedded HTML. Do not edit its content
+separately. Run `python scripts/preview.py` after changing README; run
+`python scripts/preview.py --check` to verify it is current. Preview styles live
+in `scripts/preview-template.html`. Full artwork generation also updates preview.
 
 GitHub statistics and language counts are a public-data snapshot as of the date
 in `profile.json`; they are not automatically refreshed. `source` and
@@ -40,8 +46,10 @@ python3 -m venv /tmp/eden-profile-venv
 ```
 
 Generation is deterministic and works offline from the stored profile data.
-`profile_art.py` generates the eight visible terminal assets along with the six
-previous graphic experiments; the earlier language radar files are also retained. The earlier assets remain available but are not
-referenced by the README. The validation workflow checks local references,
+`profile_art.py` generates the six visible terminal assets, optional statistics,
+and six previous graphic experiments. The earlier language radar files are
+also retained. Optional assets are not referenced by the README. The validation workflow checks local references,
 size budgets, SVG descriptions, unique identifiers and absence of external embeds
 or scripts. It also checks the ASCII portrait dimensions and character set.
+It fails when preview differs from the generated README output, catching both
+text differences and section-order differences before generation runs in CI.
