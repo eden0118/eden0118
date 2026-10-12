@@ -255,6 +255,8 @@ def main():
     stats = summarize(days)
     outputs = {"assets/contributions.svg": heatmap(days, stats), "assets/stats.svg": stats_card(days, stats),
                "data/contributions.json": json.dumps(dict(username=args.username, days=days, stats=stats), indent=2) + "\n"}
+    from practice_art import diagrams
+    outputs.update(diagrams())
     if args.portrait:
         character = portrait(args.portrait)
         outputs["assets/portrait.svg"] = character
@@ -266,7 +268,7 @@ def main():
         outputs["assets/portrait-dark.svg"] = colored
         content = colored[colored.index(">") + 1:colored.rindex("</svg>")]
         outputs["assets/design-cover-dark.svg"] = dark_variant(template).replace("{PORTRAIT}", content)
-    for name in ("design-practice", "contributions", "stats"):
+    for name in ("design-practice", "contributions", "stats", "practice-structure", "practice-journey", "practice-alignment", "practice-delivery"):
         light_path = f"assets/{name}.svg"
         light_svg = outputs.get(light_path)
         if light_svg is None:

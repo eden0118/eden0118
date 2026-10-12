@@ -50,3 +50,11 @@ To change the order, edit the --portrait list in the workflow and regenerate.
 
 The lower caption in working.png is cropped out during ASCII conversion.
 The source image is preserved.
+
+The four capability sections each have a small animated explanation generated
+by scripts/practice_art.py: requirements become a structure, user actions move
+between interface states, different needs meet in a discussion, and design
+becomes explicit states and implementation components. Motion runs briefly
+within a nine-second cycle, leaving a quiet interval for reading. Reduced motion
+hides all moving overlays while retaining the complete diagrams. Each animation
+has light and dark versions and runs as an embedded SVG without JavaScript.
