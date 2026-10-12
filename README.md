@@ -6,15 +6,15 @@
 
 <br />
 
-### WHO AM I
+### About
 
-我是 Eden，工業設計背景的 Tech Product Manager。主要做 UI/UX 分析、系統規劃與流程設計，也直接參與前端實作。
+I'm Eden, a Tech Product Manager with a background in industrial design. I focus on UI/UX analysis, system planning, and workflow design, and contribute directly to front-end implementation.
 
-金屬工藝與工業設計的訓練，讓我習慣留意結構、組裝順序和限制條件。做產品時，我會把零散的需求整理成資訊架構與任務流程，讓團隊清楚知道功能怎麼連接、接下來要做什麼。
+My training in metalwork and industrial design informs how I approach structure, assembly sequences, and practical constraints. I translate fragmented requirements into information architecture and task flows, clarifying how features connect and what the team needs to build.
 
-#### 釐清需求，整理產品結構
+#### Requirements and information architecture
 
-規劃產品時，我會先釐清使用情境、業務需求與技術限制，再梳理功能之間的關係，建立資訊架構。同時考慮後續的擴充與維護，讓新需求能接進既有的結構和流程。
+I clarify user contexts, business needs, and technical constraints before defining feature relationships and information architecture. I also account for maintenance and future changes, so new requirements can fit into the existing structure.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-structure-dark.svg" />
@@ -22,9 +22,9 @@
   <img src="./assets/practice-structure.svg" width="100%" alt="Loose requirements gather into an information structure and product plan" />
 </picture>
 
-#### 把介面放回操作流程裡看
+#### UI/UX and task flows
 
-分析 UI/UX 時，我會看資訊出現的順序、使用者怎麼完成任務，以及不同畫面與狀態如何銜接。策展與展場規劃的經驗，讓我習慣觀察人怎麼移動、注意力落在哪裡，再把這些觀察用在使用者旅程與資訊層級上。
+I evaluate interfaces in the context of complete tasks: the order in which information appears, the actions users take, and the transitions between screens and states. My experience in curation and exhibition planning informs how I think about movement, attention, and information hierarchy.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-journey-dark.svg" />
@@ -32,9 +32,9 @@
   <img src="./assets/practice-journey.svg" width="100%" alt="A user action connects successive interface states" />
 </picture>
 
-#### 協調不同角色的需求
+#### Cross-functional alignment
 
-我曾在資源有限的策展現場，協調資方、藝術家與場地技術人員的需求。做產品時，我也會把使用者需求和技術限制放在一起討論，釐清各方的考量，整理出能執行的方案。
+In curatorial work, I coordinated sponsors, artists, and venue technicians under resource constraints. I bring that experience to product discussions, making competing priorities and technical trade-offs explicit so teams can agree on a workable plan.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-alignment-dark.svg" />
@@ -42,9 +42,9 @@
   <img src="./assets/practice-alignment.svg" width="100%" alt="User needs, business goals and technical limits converge into a workable plan" />
 </picture>
 
-#### 讓設計交付有依據
+#### Design and implementation
 
-我直接參與前端實作，會把產品規劃寫到元件、畫面狀態與限制條件的層次，也記錄設計與技術上的取捨。討論和交接時，團隊可以回頭確認當初為什麼這樣做。
+I contribute directly to front-end implementation, translating product decisions into components, interface states, and constraints. I document the reasoning behind design and technical choices, giving the team a shared reference during review and handoff.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-delivery-dark.svg" />
