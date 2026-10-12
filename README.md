@@ -58,9 +58,9 @@ I connect product planning, user experience and front-end implementation.
 </td>
 <td width="50%" align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/languages-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/languages-light.svg">
-  <img src="assets/languages-dark.svg" width="480" alt="Primary languages in non-fork public repositories: TypeScript 4, JavaScript 3, Python 3.">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/roots-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/roots-light.svg">
+  <img src="assets/roots-dark.svg" width="480" alt="Design roots: industrial design, metalwork and exhibition planning. Form, material and space.">
 </picture>
 </td>
 </tr>
@@ -72,20 +72,6 @@ I connect product planning, user experience and front-end implementation.
 
 <div align="center">
 
-## a few numbers
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/stats-light.svg">
-  <img src="assets/stats-dark.svg" width="680" alt="GitHub public statistics for eden0118, captured October 12, 2026.">
-</picture>
-
-</div>
-
----
-
-<div align="center">
-
-<sub>` Curious builder / @eden0118 `</sub>
+<sub>`Curious builder / @eden0118`</sub>
 
 </div>

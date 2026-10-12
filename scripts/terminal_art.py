@@ -35,6 +35,33 @@ def ascii_portrait():
     return [''.join(ramp[round((255 - image.getpixel((x, y))) / 255 * (len(ramp) - 1))] for x in range(120)) for y in range(76)]
 
 
+def typewriter(rows, t):
+    """Reveal each nonempty ASCII row from left to right, then hold the portrait."""
+    visible = [(i, line) for i, line in enumerate(rows) if line.strip()]
+    duration, delay, typing = 10, .5, 3.5
+    interval = typing / len(visible)
+    css, clips, cursor = [], [], ['0%,4.99%{opacity:0;transform:translate(0,0)}']
+    for n, (i, _) in enumerate(visible):
+        begin = (delay + n * interval) / duration * 100
+        end = (delay + (n + 1) * interval) / duration * 100
+        css.append(f'@keyframes row-{i}{{0%,{begin:.4f}%{{width:0}}{end:.4f}%,99.99%{{width:360px}}100%{{width:0}}}}')
+        clips.append(f'<clipPath id="row-{i}"><rect class="type-mask" x="64" y="{145+i*5}" width="360" height="7" style="animation-name:row-{i}"/></clipPath>')
+        cursor += [f'{begin:.4f}%{{opacity:1;transform:translate(0,{i*5}px)}}',
+                   f'{end-.0001:.4f}%{{opacity:1;transform:translate(360px,{i*5}px)}}']
+    cursor.append('40%,100%{opacity:0;transform:translate(0,0)}')
+    css += [f'.type-mask{{animation-duration:{duration}s;animation-timing-function:steps(120,end);animation-iteration-count:infinite}}',
+            '@keyframes typing-cursor{' + ''.join(cursor) + '}',
+            f'.typing-cursor{{animation:typing-cursor {duration}s steps(120,end) infinite}}',
+            '@media(prefers-reduced-motion:reduce){.type-mask{animation:none;width:360px}.typing-cursor{display:none}}']
+    p = ['<style>' + ''.join(css) + '</style><defs>' + ''.join(clips) + '</defs>',
+         f'<g fill="{t["art"]}" font-family="{FONT}" font-size="5" xml:space="preserve">']
+    for i, line in visible:
+        runs = ''.join(f'<tspan x="{64 + match.start()*3}">{escape(match[0])}</tspan>' for match in re.finditer(r'[^ ]+', line))
+        p.append(f'<text y="{151+i*5}" clip-path="url(#row-{i})">{runs}</text>')
+    p += ['</g>', f'<rect class="typing-cursor" x="64" y="146" width="2" height="6" fill="{t["accent"]}" opacity="0" aria-hidden="true"/>']
+    return ''.join(p)
+
+
 def banner(data, t):
     p = start(1180, 610, 'Eden Chang · profile.sh --live', 'Terminal profile with an ASCII character drawing at a desk, and information about Eden Chang, Technical Product Manager.', t)
     p += [f'<rect x="14" y="14" width="1152" height="582" rx="14" fill="{t["panel"]}" stroke="{t["line"]}"/>',
@@ -46,11 +73,8 @@ def banner(data, t):
         p += [f'<rect x="{x}" y="88" width="{w}" height="474" rx="6" fill="none" stroke="{t["line"]}"/>',
               f'<path d="M{x} 124h{w}" stroke="{t["line"]}"/>', text(heading, x+16, 111, t['accent'], 13, weight='700')]
     p += [text('ASCII / 120x76', 437, 111, t['muted'], 11, 'end'), text('@'+data['handle'], 1128, 111, t['accent'], 13, 'end')]
-    p.append(f'<g fill="{t["art"]}" font-family="{FONT}" font-size="5" xml:space="preserve">')
-    for i, line in enumerate(ascii_portrait()):
-        runs = ''.join(f'<tspan x="{64 + match.start()*3}">{escape(match[0])}</tspan>' for match in re.finditer(r'[^ ]+', line))
-        p.append(f'<text y="{151+i*5}">{runs}</text>')
-    p += ['</g>', f'<path d="M49 150v-12h12M427 138h12v12M49 521v12h12M427 533h12v-12" fill="none" stroke="{t["accent"]}"/>', text('CHARACTER / ASCII DENSITY MAP', 58, 550, t['muted'], 10)]
+    p.append(typewriter(ascii_portrait(), t))
+    p += [f'<path d="M49 150v-12h12M427 138h12v12M49 521v12h12M427 533h12v-12" fill="none" stroke="{t["accent"]}"/>', text('CHARACTER / ASCII DENSITY MAP', 58, 550, t['muted'], 10)]
     fields = [('Subject',data['subject']), ('Role',data['role']), ('Background.01', data['background'][0]), ('Background.02', data['background'][1]), ('Background.03',data['background'][2]), ('Practice.01',data['practice'][0]), ('Practice.02',data['practice'][1]), ('Practice.03',data['practice'][2]), ('Practice.04',data['practice'][3]), ('Perspective.01','Users'), ('Perspective.02','Business'), ('Perspective.03','Engineering'), ('Grid.GitHub',data['handle']), ('Status','Curious builder')]
     for i, (key, value) in enumerate(fields):
         y = 153+i*24
@@ -96,6 +120,26 @@ def languages(data,t):
     return ''.join(p)
 
 
+def roots(data, t):
+    p = start(480, 300, 'Design roots', 'Eden’s background in industrial design, metalwork and exhibition planning: form, material and space.', t)
+    p.append(text('design roots', 24, 32, t['accent'], 16, weight='600'))
+    p.append(f'<path d="M80 150H400" stroke="{t["line"]}"/>')
+    for x, label in [(80, 'Form'), (240, 'Material'), (400, 'Space')]:
+        p.append(text(label, x, 88, t['muted'], 12, 'middle'))
+        p.append(f'<circle cx="{x}" cy="150" r="34" fill="{t["panel"]}" stroke="{t["art"]}"/>')
+    # A drafted object, a hammer, and exhibition panels describe physical practice.
+    p.append(f'<g fill="none" stroke="{t["art"]}" stroke-width="1.5" stroke-linejoin="round">'
+             '<path d="M62 140l18-10 18 10v20l-18 10-18-10zM62 140l18 10 18-10M80 150v20"/>'
+             '<path d="M224 134h30v10h-30zM235 144h8v25h-8z"/>'
+             '<path d="M380 138l12-5v32l-12 5zM395 133h12v32h-12zM410 133l12 5v32l-12-5z"/>'
+             '</g>')
+    for x, words in [(80, ['Industrial', 'design']), (240, ['Metalwork']), (400, ['Exhibition', 'planning'])]:
+        for i, word in enumerate(words):
+            p.append(text(word, x, 213+i*18, t['text'], 13, 'middle'))
+    p += [text('From physical objects to digital products', 240, 280, t['muted'], 11, 'middle'), '</svg>']
+    return ''.join(p)
+
+
 def stats(data,t):
     s=data['stats']
     p=start(680,180,'GitHub public statistics',f'As of {s["as_of"]}: {s["public_repos"]} public repositories, {s["stars"]} stars on non-fork public repositories, {s["followers"]} followers, {s["following"]} following.',t)
@@ -109,10 +153,10 @@ def stats(data,t):
 
 def graphics():
     data=json.loads((ROOT/'assets/profile.json').read_text())
-    return {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('banner',banner),('signals',signals),('languages',languages),('stats',stats)]}
+    return {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('banner',banner),('signals',signals),('roots',roots),('stats',stats)]}
 
 
 if __name__ == '__main__':
     for name,content in graphics().items():
         (ROOT/name).write_text(content)
-    print('Generated terminal banner, practice map, language radar and public statistics')
+    print('Generated terminal banner, practice map, design roots and public statistics')

@@ -7,7 +7,7 @@ from terminal_art import ascii_portrait
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = {'svg': 'http://www.w3.org/2000/svg'}
-GENERATED = {f'assets/{name}-{theme}.svg' for name in ('banner', 'signals', 'languages', 'stats') for theme in ('dark', 'light')}
+GENERATED = {f'assets/{name}-{theme}.svg' for name in ('banner', 'signals', 'roots', 'stats') for theme in ('dark', 'light')}
 
 
 def main():

@@ -10,6 +10,13 @@ the ASCII lettering into an SVG terminal alongside profile details. Both light
 and dark assets are local and self-contained. GitHub selects the theme through
 `picture` elements. Stack icons and the GitHub badge use external image services.
 
+`VISUAL.MAP` types the ASCII portrait from left to right, one row at a time.
+Each 10-second cycle waits 0.5 seconds, types for 3.5 seconds, and holds the
+completed portrait for 6 seconds. A small cyan cursor follows the active row.
+The animation is embedded CSS in the SVG and works when displayed as an image;
+it needs no JavaScript or external services. Reduced-motion preferences show
+the complete portrait without animation. Without CSS support, it is also static.
+
 ## Update profile data
 
 Edit `assets/profile.json` to change the banner fields and chart data. Edit the
@@ -18,8 +25,9 @@ README; keep it in sync when changing the profile text or image references.
 
 GitHub statistics and language counts are a public-data snapshot as of the date
 in `profile.json`; they are not automatically refreshed. `source` and
-`repos_source` record the public API endpoints used. Language values count each
-non-fork public repository's primary language, rather than bytes or proficiency.
+`repos_source` record the public API endpoints used. Language counts in the saved snapshot are no longer displayed.
+The design roots panel highlights industrial design, metalwork and exhibition
+planning through form, material and space.
 The practice map describes working relationships without invented skill scores.
 
 ## Regenerate and validate
@@ -33,7 +41,7 @@ python3 -m venv /tmp/eden-profile-venv
 
 Generation is deterministic and works offline from the stored profile data.
 `profile_art.py` generates the eight visible terminal assets along with the six
-previous graphic experiments. The earlier assets remain available but are not
+previous graphic experiments; the earlier language radar files are also retained. The earlier assets remain available but are not
 referenced by the README. The validation workflow checks local references,
 size budgets, SVG descriptions, unique identifiers and absence of external embeds
 or scripts. It also checks the ASCII portrait dimensions and character set.
