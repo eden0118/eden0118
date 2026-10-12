@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generate GitHub profile SVGs from public contributions and a local portrait."""
 import argparse
+import base64
 import datetime as dt
 import html
+import io
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -10,8 +12,8 @@ import re
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
-INK, MUTED, ACCENT = "#e6edf3", "#919da9", "#99e1d9"
-FONT = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+INK, MUTED, ACCENT = "#18181b", "#46515f", "#2563eb"
+FONT = "Helvetica Neue, Helvetica, Arial, sans-serif"
 
 
 class CalendarParser(HTMLParser):
@@ -87,11 +89,8 @@ def frame(width, height, title, description):
             f'<title>{html.escape(title)}</title><desc>{html.escape(description)}</desc>',
             '<style>.reveal{animation:reveal .6s ease-out both}@keyframes reveal{from{opacity:0}to{opacity:1}}'
             '@media(prefers-reduced-motion:reduce){.reveal{animation:none}.portrait-row{clip-path:none}}</style>',
-            f'<rect width="{width}" height="{height}" rx="12" fill="#0d1117"/>',
-            f'<rect x=".5" y=".5" width="{width-1}" height="{height-1}" rx="12" fill="none" stroke="#30363d"/>',
-            f'<path d="M0 38H{width}" stroke="#30363d"/>',
-            '<circle cx="22" cy="19" r="5" fill="#ff5f56"/><circle cx="39" cy="19" r="5" fill="#ffbd2e"/><circle cx="56" cy="19" r="5" fill="#27c93f"/>',
-            text(width / 2, 24, title, 12, MUTED, 'text-anchor="middle"')]
+            f'<rect width="{width}" height="{height}" fill="#fafafa"/>',
+            text(24, 30, title, 18, INK)]
 
 
 def heatmap(days, stats):
@@ -99,8 +98,8 @@ def heatmap(days, stats):
     offset = (start.weekday() + 1) % 7
     cols = (len(days) + offset + 6) // 7
     width = max(860, 60 + cols * 15)
-    parts = frame(width, 228, "eden@github: ~$ ./contributions.sh", "Daily contributions over the last year")
-    palette = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
+    parts = frame(width, 228, "Activity / last year", "Daily contributions over the last year")
+    palette = ["#e8ecf0", "#bcd0fa", "#7ea4ef", "#487adb", "#2563eb"]
     seen = set()
     for i, day in enumerate(days):
         col, row = divmod(i + offset, 7)
@@ -117,22 +116,26 @@ def heatmap(days, stats):
 
 
 def stats_card(days, stats):
-    parts = frame(840, 880, "eden@github: ~$ ./stats.sh", "Contribution statistics and monthly totals")
-    tiles = [("current streak", f"{stats['current']} days"), ("longest streak", f"{stats['longest']} days"),
-             ("contributions", f"{stats['total']:,}"), ("active days", f"{stats['active']} / {len(days)}"),
-             ("best day", f"{stats['best']:,}"), ("avg / active day", stats["average"])]
-    for i, (label, value) in enumerate(tiles):
-        x, y = 24 + i % 2 * 404, 66 + i // 2 * 166
-        parts.append(f'<g class="reveal" style="animation-delay:{i*.12}s"><rect x="{x}" y="{y}" width="388" height="148" rx="8" fill="#161b22"/>')
-        parts.extend([text(x + 22, y + 38, "$ " + label, 20, MUTED), text(x + 22, y + 101, value, 43, ACCENT if i == 0 else INK), "</g>"])
-    parts.extend([text(24, 610, "$ contributions / month", 22, MUTED), text(24, 842, "Last year · public GitHub contribution calendar", 16, MUTED)])
+    parts = frame(860, 430, "Activity / in numbers", "Contribution statistics and monthly totals")
+    metrics = [("Current streak", f"{stats['current']} days"),
+               ("Longest streak", f"{stats['longest']} days"),
+               ("Contributions", f"{stats['total']:,}"),
+               ("Active days", f"{stats['active']} / {len(days)}"),
+               ("Best day", f"{stats['best']:,}"),
+               ("Average per active day", stats["average"])]
+    for i, (label, value) in enumerate(metrics):
+        x, y = 24 + (i % 3) * 280, 72 + (i // 3) * 90
+        parts.extend([text(x, y, label, 16, MUTED), text(x, y + 38, value, 32, INK)])
+    parts.append('<path d="M24 228H836" stroke="#dce0e5"/>')
+    parts.append(text(24, 260, "Monthly contributions", 16, MUTED))
     monthly = list(stats["monthly"].items())
     peak = max(value for _, value in monthly) or 1
-    slot = 792 / len(monthly)
+    slot = 812 / len(monthly)
     for i, (month, value) in enumerate(monthly):
-        x, height = 24 + i * slot + 8, 156 * value / peak
-        parts.append(f'<g class="reveal" style="animation-delay:{.7+i*.05}s"><rect x="{x:.1f}" y="{782-height:.1f}" width="{slot-16:.1f}" height="{height:.1f}" rx="3" fill="{ACCENT}"/>')
-        parts.extend([text(x + (slot - 16) / 2, 806, dt.date.fromisoformat(month + "-01").strftime("%b"), 13, MUTED, 'text-anchor="middle"'), "</g>"])
+        x, height = 24 + i * slot + 8, 90 * value / peak
+        parts.append(f'<rect x="{x:.1f}" y="{365-height:.1f}" width="{slot-16:.1f}" height="{height:.1f}" fill="{ACCENT}"/>')
+        parts.append(text(x + (slot - 16) / 2, 387, dt.date.fromisoformat(month + "-01").strftime("%b"), 13, MUTED, 'text-anchor="middle"'))
+    parts.append(text(24, 415, "Source: public GitHub contribution calendar", 13, MUTED))
     return "".join(parts) + "</svg>"
 
 
@@ -144,14 +147,54 @@ def portrait(source):
     image = ImageOps.fit(background.convert("L"), (120, 100))
     image = ImageEnhance.Contrast(image).enhance(1.15)
     ramp = " .:-=+*#%@"
-    parts = frame(840, 880, "eden@github: ~$ ./portrait.sh", "A bubble tea character revealed line by line as ASCII art")
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img">',
+             '<title>Eden / animated character study</title>',
+             '<desc>A bubble tea character drawn line by line in ASCII.</desc>',
+             '<style>@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}}</style>',
+             '<rect width="840" height="800" fill="#fafafa"/>']
     for row in range(100):
         line = "".join(ramp[min(9, round((255 - image.getpixel((col, row))) / 255 * 9))] for col in range(120))
-        y, delay = 72 + row * 7.35, row * .045
+        y, delay = 30 + row * 7.35, row * .045
         parts.append(f'<clipPath id="r{row}"><rect x="24" y="{y-7:.2f}" width="792" height="9"><animate attributeName="width" from="0" to="792" dur=".045s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
         parts.append(f'<g class="portrait-row" clip-path="url(#r{row})">' + text(24, round(y, 2), line, 9, INK, 'xml:space="preserve" textLength="792" lengthAdjust="spacingAndGlyphs"') + "</g>")
-    parts.append('<path d="M0 824H840" stroke="#30363d"/>')
-    parts.append(text(24, 854, "eden@github:~$ whoami   EdenChang", 17, ACCENT))
+    return "".join(parts) + "</svg>"
+
+
+def dark_variant(svg):
+    """Recolor the shared artwork without changing layout or animation timing."""
+    palette = {
+        "#fafafa": "#0d1117", "#18181b": "#e6edf3",
+        "#46515f": "#a6b2c0", "#2563eb": "#8db1ff",
+        "#dce0e5": "#30363d", "#929ba8": "#8b98a8",
+        "#edf2ff": "#17263d", "#f0f2f5": "#161b22",
+        "#e8ecf0": "#161b22", "#bcd0fa": "#23395e",
+        "#7ea4ef": "#315486", "#487adb": "#547fc0",
+    }
+    return re.sub(r"#[0-9a-fA-F]{6}", lambda match: palette.get(match[0].lower(), match[0]), svg)
+
+
+def color_portrait(source):
+    """Keep the character's original expression while revealing it row by row."""
+    from PIL import Image, ImageDraw
+    image = Image.open(source).convert("RGBA")
+    # Remove only connected white background, preserving enclosed white eyes.
+    for point in ((0, 0), (image.width - 1, 0), (0, image.height - 1),
+                  (image.width - 1, image.height - 1)):
+        ImageDraw.floodfill(image, point, (0, 0, 0, 0), thresh=18)
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG", optimize=True)
+    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" role="img">',
+             '<title>Eden / animated character study</title>',
+             '<desc>The original bubble tea character, revealed row by row on a soft mint backdrop.</desc>',
+             '<style>@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}}</style>',
+             '<rect width="840" height="800" fill="#0d1117"/>',
+             '<circle cx="420" cy="400" r="346" fill="#d8ebe7"/>',
+             f'<defs><image id="colored-character" x="64" y="32" width="712" height="736" href="data:image/png;base64,{encoded}"/></defs>']
+    for row in range(100):
+        y, delay = 32 + row * 7.36, row * .045
+        parts.append(f'<clipPath id="r{row}"><rect x="24" y="{y:.2f}" width="792" height="7.36"><animate attributeName="width" from="0" to="792" dur=".045s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
+        parts.append(f'<use class="portrait-row" href="#colored-character" clip-path="url(#r{row})"/>')
     return "".join(parts) + "</svg>"
 
 
@@ -174,7 +217,22 @@ def main():
     outputs = {"assets/contributions.svg": heatmap(days, stats), "assets/stats.svg": stats_card(days, stats),
                "data/contributions.json": json.dumps(dict(username=args.username, days=days, stats=stats), indent=2) + "\n"}
     if args.portrait:
-        outputs["assets/portrait.svg"] = portrait(args.portrait)
+        character = portrait(args.portrait)
+        outputs["assets/portrait.svg"] = character
+        template = (ROOT / "scripts/design-cover-template.svg").read_text()
+        # The outer SVG supplies the scaled viewport; keep the portrait's content.
+        content = character[character.index(">") + 1:character.rindex("</svg>")]
+        outputs["assets/design-cover.svg"] = template.replace("{PORTRAIT}", content)
+        colored = color_portrait(args.portrait)
+        outputs["assets/portrait-dark.svg"] = colored
+        content = colored[colored.index(">") + 1:colored.rindex("</svg>")]
+        outputs["assets/design-cover-dark.svg"] = dark_variant(template).replace("{PORTRAIT}", content)
+    for name in ("design-practice", "contributions", "stats"):
+        light_path = f"assets/{name}.svg"
+        light_svg = outputs.get(light_path)
+        if light_svg is None:
+            light_svg = (ROOT / light_path).read_text()
+        outputs[f"assets/{name}-dark.svg"] = dark_variant(light_svg)
     for path, content in outputs.items():
         target = ROOT / path
         target.parent.mkdir(parents=True, exist_ok=True)

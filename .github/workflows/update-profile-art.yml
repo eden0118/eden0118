@@ -9,6 +9,7 @@ on:
     paths:
       - 'scripts/**'
       - 'drink.png'
+      - 'assets/design-practice.svg'
       - '.github/workflows/update-profile-art.yml'
 
 permissions:

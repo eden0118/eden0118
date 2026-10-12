@@ -1,28 +1,49 @@
-<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/design-cover-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./assets/design-cover.svg" />
+  <img src="./assets/design-cover.svg" width="100%" alt="Eden Chang — industrial design thinking, with a character revealed line by line" />
+</picture>
 
-<h3><code>eden@github ~ $ ./contributions.sh</code></h3>
+### Tech Product Manager
 
-<img src="./assets/contributions.svg" width="860" alt="Eden's contribution calendar, updated daily" />
-
-<br /><br />
-
-<h3><code>eden@github ~ $ whoami</code></h3>
-
-<img src="./assets/portrait.svg" width="49%" alt="Eden's bubble tea character in animated ASCII" />
-<img src="./assets/stats.svg" width="49%" alt="Eden's contribution statistics and monthly activity" />
-
-<br /><br />
-
-<h3><code>eden@github ~ $ cat about.txt</code></h3>
-
-<p><strong>EdenChang · Tech Product Manager</strong></p>
-<p>系統規劃 · 流程設計</p>
-<p>Turning product ideas into clear systems and thoughtful workflows.</p>
+從**工業設計**出發，關注人如何理解、使用與體驗產品。<br />
+擅長 **UI/UX 分析、系統規劃與流程設計**，讓產品體驗與背後的系統邏輯彼此對齊。
 
 <br />
 
-<h3><code>eden@github ~ $ ./links.sh</code></h3>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/design-practice-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./assets/design-practice.svg" />
+  <img src="./assets/design-practice.svg" width="100%" alt="Three connected design perspectives: UI/UX analysis, system planning, and workflow design" />
+</picture>
 
-<a href="https://github.com/eden0118?tab=repositories"><img src="https://img.shields.io/badge/Projects-eden0118-0d1117?style=for-the-badge&amp;logo=github&amp;logoColor=99e1d9" alt="Explore Eden's projects" /></a>
+### 設計與產品
 
-</div>
+- **UI/UX 分析** — 從使用情境、資訊層級與互動細節，找出體驗中的問題。
+- **系統規劃** — 釐清需求、功能與相依關係，建立清楚的產品結構。
+- **流程設計** — 串起使用者旅程與系統行為，讓每個步驟有合理的目的。
+
+<br />
+
+[瀏覽我的 GitHub 專案](https://github.com/eden0118?tab=repositories)
+
+---
+
+<details>
+<summary>GitHub activity</summary>
+
+<br />
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/contributions-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./assets/contributions.svg" />
+  <img src="./assets/contributions.svg" width="100%" alt="Eden's contribution calendar, updated daily" />
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/stats-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./assets/stats.svg" />
+  <img src="./assets/stats.svg" width="100%" alt="Eden's contribution totals, streaks, and monthly activity" />
+</picture>
+
+</details>

@@ -2,33 +2,69 @@
 <html lang="zh-Hant">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eden · GitHub profile preview</title>
+<title>Eden Chang · Design &amp; product</title>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; background: #0d1117; color: #e6edf3; font: 16px/1.6 system-ui, sans-serif; }
-  main { max-width: 920px; margin: 24px auto; padding: 24px; border: 1px solid #30363d; border-radius: 6px; text-align: center; }
-  h3 { margin: 24px 0 16px; font-size: 18px; }
-  code { background: #161b22; border-radius: 6px; padding: 4px 8px; font: 85% ui-monospace, monospace; }
-  img { max-width: 100%; height: auto; vertical-align: top; }
-  .panels { display: flex; gap: 8px; }
-  .panels img { width: calc(50% - 4px); }
+  body { margin: 0; background: #f0f2f5; color: #18181b; font: 16px/1.75 system-ui, sans-serif; }
+  main { max-width: 920px; margin: 24px auto; padding: 30px; background: white; border: 1px solid #dce0e5; border-radius: 6px; }
+  img { display: block; max-width: 100%; height: auto; }
+  .cover, .practice { width: 100%; }
+  .intro { margin: 30px 0 36px; }
+  h3 { font-size: 20px; line-height: 1.5; margin: 0 0 12px; }
   p { margin: 8px 0; }
-  a { color: #99e1d9; }
-  @media (max-width: 600px) { main { margin: 8px; padding: 16px; } .panels { flex-direction: column; } .panels img { width: 100%; } }
+  .work { margin: 30px 0 36px; }
+  ul { padding-left: 22px; }
+  li { margin: 12px 0; }
+  a { color: #2563eb; text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid #2563eb; outline-offset: 4px; }
+  hr { height: 1px; border: 0; background: #dce0e5; margin: 30px 0; }
+  summary { cursor: pointer; color: #46515f; min-height: 44px; }
+  details img { margin-top: 16px; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #010409; color: #e6edf3; }
+    main { background: #0d1117; border-color: #30363d; }
+    a { color: #82aaff; } summary { color: #b1bac4; }
+  }
+  @media (max-width: 600px) { main { margin: 8px; padding: 18px; } h3 { font-size: 18px; } }
 </style>
 <main>
-  <h3><code>eden@github ~ $ ./contributions.sh</code></h3>
-  <img src="assets/contributions.svg" alt="Contribution calendar">
-  <h3><code>eden@github ~ $ whoami</code></h3>
-  <div class="panels">
-    <img src="assets/portrait.svg" alt="ASCII bubble tea portrait">
-    <img src="assets/stats.svg" alt="GitHub contribution statistics">
-  </div>
-  <h3><code>eden@github ~ $ cat about.txt</code></h3>
-  <p><strong>EdenChang · Tech Product Manager</strong></p>
-  <p>系統規劃 · 流程設計</p>
-  <p>Turning product ideas into clear systems and thoughtful workflows.</p>
-  <h3><code>eden@github ~ $ ./links.sh</code></h3>
-  <a href="https://github.com/eden0118?tab=repositories">Explore my projects on GitHub</a>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/design-cover-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/design-cover.svg">
+    <img class="cover" src="assets/design-cover.svg" alt="Eden Chang — industrial design thinking, with a character revealed line by line">
+  </picture>
+  <section class="intro">
+    <h3>Tech Product Manager</h3>
+    <p>從<strong>工業設計</strong>出發，關注人如何理解、使用與體驗產品。<br>
+    擅長 <strong>UI/UX 分析、系統規劃與流程設計</strong>，讓產品體驗與背後的系統邏輯彼此對齊。</p>
+  </section>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/design-practice-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/design-practice.svg">
+    <img class="practice" src="assets/design-practice.svg" alt="UI/UX analysis, system planning, and workflow design">
+  </picture>
+  <section class="work">
+    <h3>設計與產品</h3>
+    <ul>
+      <li><strong>UI/UX 分析</strong> — 從使用情境、資訊層級與互動細節，找出體驗中的問題。</li>
+      <li><strong>系統規劃</strong> — 釐清需求、功能與相依關係，建立清楚的產品結構。</li>
+      <li><strong>流程設計</strong> — 串起使用者旅程與系統行為，讓每個步驟有合理的目的。</li>
+    </ul>
+  </section>
+  <a href="https://github.com/eden0118?tab=repositories">瀏覽我的 GitHub 專案</a>
+  <hr>
+  <details>
+    <summary>GitHub activity</summary>
+    <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/contributions.svg">
+    <img src="assets/contributions.svg" alt="Contribution calendar">
+  </picture>
+    <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/stats.svg">
+    <img src="assets/stats.svg" alt="Contribution statistics">
+  </picture>
+  </details>
 </main>
 </html>

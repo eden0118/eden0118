@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="380" viewBox="0 0 860 380" role="img" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<title>Eden Chang — Tech Product Manager, industrial design background</title>
+<desc>A design sheet pairing oversized typography with a character revealed row by row.</desc>
+<rect width="860" height="380" fill="#fafafa"/>
+<path d="M32 32h796M32 348h796" stroke="#dce0e5"/>
+<text x="34" y="65" font-size="18" fill="#46515f">Industrial design thinking. Digital product practice.</text>
+<text x="28" y="166" font-size="108" font-weight="600" letter-spacing="-7" fill="#18181b">Eden</text>
+<text x="28" y="266" font-size="108" font-weight="600" letter-spacing="-7" fill="#18181b">Chang.</text>
+<text x="34" y="323" font-size="20" fill="#46515f">UI/UX analysis · System planning · Workflow design</text>
+<!-- Animated character study -->
+<svg x="520" y="50" width="300" height="286" viewBox="0 0 840 800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+{PORTRAIT}
+</svg>
+</svg>
