@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/design-cover-dark.svg" />
   <source media="(prefers-color-scheme: light)" srcset="./assets/design-cover.svg" />
-  <img src="./assets/design-cover.svg" width="100%" alt="Eden Chang — industrial design thinking, with a character revealed line by line" />
+  <img src="./assets/design-cover.svg" width="100%" alt="Eden Chang — industrial design thinking, with an ASCII character with a typing animation" />
 </picture>
 
 ### Tech Product Manager

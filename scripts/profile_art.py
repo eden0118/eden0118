@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """Generate GitHub profile SVGs from public contributions and a local portrait."""
 import argparse
-import base64
 import datetime as dt
 import html
-import io
 from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+import random
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -139,24 +138,67 @@ def stats_card(days, stats):
     return "".join(parts) + "</svg>"
 
 
-def portrait(source):
-    from PIL import Image, ImageEnhance, ImageOps
-    image = Image.open(source).convert("RGBA")
-    background = Image.new("RGBA", image.size, "white")
-    background.alpha_composite(image)
-    image = ImageOps.fit(background.convert("L"), (120, 100))
-    image = ImageEnhance.Contrast(image).enhance(1.15)
-    ramp = " .:-=+*#%@"
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img">',
-             '<title>Eden / animated character study</title>',
-             '<desc>A bubble tea character drawn line by line in ASCII.</desc>',
-             '<style>@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}}</style>',
-             '<rect width="840" height="800" fill="#fafafa"/>']
-    for row in range(100):
-        line = "".join(ramp[min(9, round((255 - image.getpixel((col, row))) / 255 * 9))] for col in range(120))
-        y, delay = 30 + row * 7.35, row * .045
-        parts.append(f'<clipPath id="r{row}"><rect x="24" y="{y-7:.2f}" width="792" height="9"><animate attributeName="width" from="0" to="792" dur=".045s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
-        parts.append(f'<g class="portrait-row" clip-path="url(#r{row})">' + text(24, round(y, 2), line, 9, INK, 'xml:space="preserve" textLength="792" lengthAdjust="spacingAndGlyphs"') + "</g>")
+def portrait(source, dark=False):
+    from PIL import Image, ImageChops, ImageEnhance, ImageOps
+    image = Image.open(source).convert("RGB")
+    # Trim only exterior paper margins; keep the person, cat, and laptop together.
+    difference = ImageChops.difference(image, Image.new("RGB", image.size, "white"))
+    bounds = difference.convert("L").point(lambda value: 255 if value > 35 else 0).getbbox()
+    if bounds:
+        x0, y0, x1, y1 = bounds
+        margin = round(max(x1 - x0, y1 - y0) * .035)
+        image = image.crop((max(0, x0 - margin), max(0, y0 - margin),
+                            min(image.width, x1 + margin), min(image.height, y1 + margin)))
+    cols, rows = 100, 96
+    image = ImageOps.fit(image.convert("L"), (cols, rows))
+    image = ImageEnhance.Contrast(image).enhance(1.2)
+    ramp = " .:-=+*#"
+    background, ink = ("#0d1117", "#b7cdc8") if dark else ("#fafafa", "#30383b")
+    parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img">',
+             '<title>Eden / animated ASCII character study</title>',
+             '<desc>Eden and a cat stretching beside a laptop, formed by changing ASCII characters.</desc>',
+             '<style>@media(prefers-reduced-motion:reduce){.scramble-frame{display:none!important}.portrait-final{opacity:1!important}}</style>',
+             f'<rect width="840" height="800" fill="{background}"/>']
+    lines = ["".join(ramp[round((255 - image.getpixel((col, row))) / 255 * (len(ramp) - 1))]
+                     for col in range(cols)) for row in range(rows)]
+    # Each character has its own arrival and settling time across the whole image.
+    # Frames are generated ahead of time: embedded SVGs need no JavaScript.
+    rng = random.Random(18)
+    timing = [[(rng.uniform(0, .38), rng.uniform(.42, .98)) for _ in range(cols)]
+              for _ in range(rows)]
+    frames, interval = 24, .15
+    step = 736 / rows
+
+    def render_lines(frame_lines):
+        return "".join(text(24, round(32 + row * step, 2), line, 10.2, ink,
+                            'xml:space="preserve" textLength="792" lengthAdjust="spacingAndGlyphs"')
+                       for row, line in enumerate(frame_lines))
+
+    # The final artwork is the static fallback. Hide it only during playback.
+    parts.append('<g class="portrait-final">')
+    parts.append(f'<set attributeName="opacity" to="0" begin="0s" dur="{frames * interval:.2f}s"/>')
+    parts.append(render_lines(lines))
+    parts.append('</g>')
+    for frame in range(frames):
+        progress = (frame + 1) / frames
+        frame_lines = []
+        for row, line in enumerate(lines):
+            chars = []
+            for col, target in enumerate(line):
+                arrival, settled = timing[row][col]
+                if target == " " or progress < arrival:
+                    chars.append(" ")
+                elif progress >= settled:
+                    chars.append(target)
+                else:
+                    index = ramp.index(target)
+                    # Similar density keeps the illustration recognizable as it types.
+                    variants = ramp[max(1, index - 2):min(len(ramp), index + 3)]
+                    chars.append(rng.choice(variants))
+            frame_lines.append("".join(chars))
+        parts.append(f'<g class="scramble-frame" opacity="0"><set attributeName="opacity" to="1" begin="{frame * interval:.2f}s" dur="{interval:.2f}s"/>')
+        parts.append(render_lines(frame_lines))
+        parts.append('</g>')
     return "".join(parts) + "</svg>"
 
 
@@ -171,31 +213,6 @@ def dark_variant(svg):
         "#7ea4ef": "#315486", "#487adb": "#547fc0",
     }
     return re.sub(r"#[0-9a-fA-F]{6}", lambda match: palette.get(match[0].lower(), match[0]), svg)
-
-
-def color_portrait(source):
-    """Keep the character's original expression while revealing it row by row."""
-    from PIL import Image, ImageDraw
-    image = Image.open(source).convert("RGBA")
-    # Remove only connected white background, preserving enclosed white eyes.
-    for point in ((0, 0), (image.width - 1, 0), (0, image.height - 1),
-                  (image.width - 1, image.height - 1)):
-        ImageDraw.floodfill(image, point, (0, 0, 0, 0), thresh=18)
-    buffer = io.BytesIO()
-    image.save(buffer, format="PNG", optimize=True)
-    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
-    parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="840" height="800" viewBox="0 0 840 800" role="img">',
-             '<title>Eden / animated character study</title>',
-             '<desc>The original bubble tea character, revealed row by row on a soft mint backdrop.</desc>',
-             '<style>@media(prefers-reduced-motion:reduce){.portrait-row{clip-path:none}}</style>',
-             '<rect width="840" height="800" fill="#0d1117"/>',
-             '<circle cx="420" cy="400" r="346" fill="#d8ebe7"/>',
-             f'<defs><image id="colored-character" x="64" y="32" width="712" height="736" href="data:image/png;base64,{encoded}"/></defs>']
-    for row in range(100):
-        y, delay = 32 + row * 7.36, row * .045
-        parts.append(f'<clipPath id="r{row}"><rect x="24" y="{y:.2f}" width="792" height="7.36"><animate attributeName="width" from="0" to="792" dur=".045s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
-        parts.append(f'<use class="portrait-row" href="#colored-character" clip-path="url(#r{row})"/>')
-    return "".join(parts) + "</svg>"
 
 
 def main():
@@ -223,7 +240,7 @@ def main():
         # The outer SVG supplies the scaled viewport; keep the portrait's content.
         content = character[character.index(">") + 1:character.rindex("</svg>")]
         outputs["assets/design-cover.svg"] = template.replace("{PORTRAIT}", content)
-        colored = color_portrait(args.portrait)
+        colored = portrait(args.portrait, dark=True)
         outputs["assets/portrait-dark.svg"] = colored
         content = colored[colored.index(">") + 1:colored.rindex("</svg>")]
         outputs["assets/design-cover-dark.svg"] = dark_variant(template).replace("{PORTRAIT}", content)
