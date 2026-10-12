@@ -8,7 +8,7 @@ from pathlib import Path
 import random
 import re
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 from practice_art import diagrams
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,7 +16,9 @@ SOURCES = ('design.png', 'need-sleep.png', 'working.png', 'drink.png')
 FRAMES, FRAME_MS, HOLD_MS = 72, 50, 3400
 COLS, ROWS = 100, 96
 SIZE, SCALE = (300, 286), 2
+TONES = 4
 RAMP = ' .:-=+*#'
+ASCII_FONT = ImageFont.load_default(size=8)
 
 
 def ascii_lines(source, cols=100, rows=96):
@@ -58,11 +60,10 @@ def render_row(line):
     """Cache small monochrome strips; glyph positions use a fixed ASCII grid."""
     strip = Image.new('L', (SIZE[0] * SCALE, 10), 0)
     draw = ImageDraw.Draw(strip)
-    font = ImageFont.load_default(size=8)
     for col, character in enumerate(line):
         if character != ' ':
             x = (24 + col * 792 / COLS) * SIZE[0] / 840 * SCALE
-            draw.text((x, 0), character, fill=255, font=font)
+            draw.text((x, 0), character, fill=255, font=ASCII_FONT)
     return strip
 
 
@@ -72,11 +73,10 @@ def render_mask(lines):
         y = round((24 + row * 736 / ROWS) * SIZE[1] / 800 * SCALE)
         strip = render_row(line)
         # Maximum compositing preserves glyph edges where strips overlap.
-        from PIL import ImageChops
         area = mask.crop((0, y, strip.width, y + strip.height))
         mask.paste(ImageChops.lighter(area, strip), (0, y))
     return mask.resize(SIZE, Image.Resampling.LANCZOS).point(
-        [round(value / 17) for value in range(256)], mode='P')
+        [round(value * (TONES - 1) / 255) for value in range(256)], mode='P')
 
 
 def carousel_frames(sources):
@@ -111,8 +111,8 @@ def carousel_frames(sources):
 
 def palette(dark):
     background, ink = ((13, 17, 23), (183, 205, 200)) if dark else ((250, 250, 250), (48, 56, 59))
-    colors = [round(background[channel] + (ink[channel] - background[channel]) * level / 15)
-              for level in range(16) for channel in range(3)]
+    colors = [round(background[channel] + (ink[channel] - background[channel]) * level / (TONES - 1))
+              for level in range(TONES) for channel in range(3)]
     return colors + [0] * (768 - len(colors))
 
 

@@ -10,6 +10,7 @@ pre-rendered animation instead of thousands of live SVG text elements.
 python3 -m venv /tmp/eden-profile-venv
 /tmp/eden-profile-venv/bin/pip install -r scripts/requirements.txt
 /tmp/eden-profile-venv/bin/python scripts/profile_art.py
+/tmp/eden-profile-venv/bin/python scripts/check_art.py
 ```
 
 The source order is `design.png`, `need-sleep.png`, `working.png`, `drink.png`.
@@ -30,3 +31,8 @@ preferences show the first completed illustration and static diagrams.
 Only assets used by the README are kept. The earlier standalone portraits,
 contribution cards, summary diagram, and unused source illustration have been
 removed. Edit `README.md` for copy changes and update `preview.html` to match.
+
+The cover uses a four-tone animated GIF embedded in a small SVG, keeping the
+heading text sharp without live text animation. The asset checks enforce a
+download and element budget, verify the four-scene loop, and catch a return to
+the previous slow typing cadence.
