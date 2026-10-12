@@ -1,13 +1,1 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/design-cover-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="./assets/design-cover.svg" />
-  <img src="./assets/design-cover.svg" width="100%" alt="Eden Chang — technical product manager and curious builder, with four ASCII characters gently crossfading" />
-</picture>
-
-Industrial design, metalwork, and exhibition planning shaped how I approach product work.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-workflow-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="./assets/practice-workflow.svg" />
-  <img src="./assets/practice-workflow.svg" width="100%" alt="Four connected practices: structure requirements, connect the user journey, align people, and carry product decisions into implementation" />
-</picture>
+<img src="./assets/profile-card.svg" width="720" alt="Eden Chang — Technical Product Manager. Background: industrial design, metalwork, and exhibition planning. Working practices: product planning, user experience, collaboration, and front-end development. A retro pixel dossier with a cyan character portrait." />
