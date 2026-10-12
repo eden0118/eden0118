@@ -3,7 +3,7 @@
 <desc>A design sheet pairing oversized typography with four character illustrations cycling through changing ASCII symbols.</desc>
 <rect width="860" height="380" fill="#fafafa"/>
 <path d="M32 32h796M32 348h796" stroke="#dce0e5"/>
-<text x="34" y="65" font-size="18" fill="#46515f">Industrial design thinking. Digital product practice.</text>
+<text x="34" y="65" font-size="18" fill="#46515f">Industrial design, applied to digital products.</text>
 <text x="28" y="166" font-size="108" font-weight="600" letter-spacing="-7" fill="#18181b">Eden</text>
 <text x="28" y="266" font-size="108" font-weight="600" letter-spacing="-7" fill="#18181b">Chang.</text>
 <text x="34" y="323" font-size="20" fill="#46515f">UI/UX analysis · System planning · Workflow design</text>

@@ -39,7 +39,7 @@ def structure():
         parts.append(f'<g class="motion" opacity="0"><g fill="#edf2ff" stroke="{BLUE}" stroke-width="1.5"><rect x="{x}" y="{y}" width="48" height="28" rx="2"/><path d="M{x+8} {y+10}h29M{x+8} {y+18}h20"/></g>'
                      f'<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.04;.27;.34;1" dur="9s" begin="{i*.3}s" repeatCount="indefinite"/>'
                      f'<animateTransform attributeName="transform" type="translate" values="0 0;{dx} {dy};{dx} {dy}" keyTimes="0;.3;1" dur="9s" begin="{i*.3}s" repeatCount="indefinite"/></g>')
-    parts.extend([label(146, 169, 'Scattered requirements'), label(426, 169, 'Information structure'), label(714, 169, 'Product plan')])
+    parts.extend([label(146, 169, 'Initial requirements'), label(426, 169, 'Information architecture'), label(714, 169, 'Product plan')])
     return sheet('Organizing requirements into a product structure', 'Loose requirements converge into an information hierarchy and a concrete product plan.', ''.join(parts))
 
 
@@ -57,7 +57,7 @@ def journey():
 
 def alignment():
     parts = []
-    for y, word in [(25, 'User needs'), (73, 'Business goals'), (121, 'Technical limits')]:
+    for y, word in [(25, 'User needs'), (73, 'Business goals'), (121, 'Technical constraints')]:
         parts.append(f'<rect x="40" y="{y}" width="182" height="30" rx="4" fill="none" stroke="{INK}" stroke-width="1.5"/>')
         parts.append(label(131, y+21, word, 16, INK))
         parts.append(arrow(f'M238 {y+15}H284L354 88'))
@@ -66,7 +66,7 @@ def alignment():
                   arrow('M478 88H601'), traveler('M478 88H601', 2),
                   '<rect x="620" y="30" width="192" height="112" rx="3" fill="none" stroke="#18181b" stroke-width="1.5"/>',
                   '<path d="M639 54h117M639 71h152M639 88h98M639 105h131" stroke="#929ba8" stroke-width="2"/>',
-                  label(426, 169, 'Discuss the trade-offs'), label(716, 169, 'A workable plan')])
+                  label(426, 169, 'Shared priorities'), label(716, 169, 'A workable plan')])
     return sheet('Aligning different needs into a workable plan', 'User needs, business goals, and technical limits meet in a shared discussion before becoming a workable plan.', ''.join(parts))
 
 

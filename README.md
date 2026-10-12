@@ -8,13 +8,13 @@
 
 ### About
 
-I'm Eden, a Tech Product Manager with a background in industrial design. I focus on UI/UX analysis, system planning, and workflow design, and contribute directly to front-end implementation.
+I'm Eden, a technical product manager with a background in industrial design. My work spans product planning, UI/UX analysis, and front-end development.
 
-My training in metalwork and industrial design informs how I approach structure, assembly sequences, and practical constraints. I translate fragmented requirements into information architecture and task flows, clarifying how features connect and what the team needs to build.
+Industrial design and metalwork taught me to think about how parts fit together and how constraints shape a design. I use that same approach to organize complex requirements into clear features and user flows.
 
-#### Requirements and information architecture
+#### Product planning
 
-I clarify user contexts, business needs, and technical constraints before defining feature relationships and information architecture. I also account for maintenance and future changes, so new requirements can fit into the existing structure.
+I start with what users need, what the business is trying to achieve, and the technical constraints we need to work within. I then map out the features and information architecture, keeping future changes and maintenance in mind.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-structure-dark.svg" />
@@ -22,9 +22,9 @@ I clarify user contexts, business needs, and technical constraints before defini
   <img src="./assets/practice-structure.svg" width="100%" alt="Loose requirements gather into an information structure and product plan" />
 </picture>
 
-#### UI/UX and task flows
+#### User experience
 
-I evaluate interfaces in the context of complete tasks: the order in which information appears, the actions users take, and the transitions between screens and states. My experience in curation and exhibition planning informs how I think about movement, attention, and information hierarchy.
+I review interfaces as part of the full user journey: what information people need, what they can do next, and how screens and states connect. My experience planning exhibitions also shapes how I think about navigation, pacing, and attention.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-journey-dark.svg" />
@@ -32,9 +32,9 @@ I evaluate interfaces in the context of complete tasks: the order in which infor
   <img src="./assets/practice-journey.svg" width="100%" alt="A user action connects successive interface states" />
 </picture>
 
-#### Cross-functional alignment
+#### Cross-functional collaboration
 
-In curatorial work, I coordinated sponsors, artists, and venue technicians under resource constraints. I bring that experience to product discussions, making competing priorities and technical trade-offs explicit so teams can agree on a workable plan.
+In exhibition work, I coordinated sponsors, artists, and venue staff with limited resources. I bring that experience to product teams, helping people work through competing priorities and technical trade-offs to agree on a practical plan.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-alignment-dark.svg" />
@@ -42,9 +42,9 @@ In curatorial work, I coordinated sponsors, artists, and venue technicians under
   <img src="./assets/practice-alignment.svg" width="100%" alt="User needs, business goals and technical limits converge into a workable plan" />
 </picture>
 
-#### Design and implementation
+#### Design and delivery
 
-I contribute directly to front-end implementation, translating product decisions into components, interface states, and constraints. I document the reasoning behind design and technical choices, giving the team a shared reference during review and handoff.
+I stay involved in front-end development, turning product decisions into components, interface states, and implementation details. I record the reasoning behind design and technical decisions so the team can revisit those choices during development and handoff.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/practice-delivery-dark.svg" />
