@@ -1,0 +1,30 @@
+{
+  "subject": "Eden Chang",
+  "role": "Technical Product Manager",
+  "handle": "eden0118",
+  "background": [
+    "Industrial design",
+    "Metalwork",
+    "Exhibition planning"
+  ],
+  "practice": [
+    "Planning",
+    "User experience",
+    "Collaboration",
+    "Front-end"
+  ],
+  "stats": {
+    "public_repos": 33,
+    "followers": 2,
+    "following": 7,
+    "stars": 0,
+    "languages": {
+      "Python": 3,
+      "TypeScript": 4,
+      "JavaScript": 3
+    },
+    "as_of": "2026-10-12",
+    "source": "https://api.github.com/users/eden0118",
+    "repos_source": "https://api.github.com/users/eden0118/repos?per_page=100&sort=updated"
+  }
+}

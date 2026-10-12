@@ -1,33 +1,35 @@
 #!/usr/bin/env python3
-"""Validate graphic-only assets and the editable Markdown layout."""
+"""Validate self-contained profile graphics and references in both previews."""
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
+from terminal_art import ascii_portrait
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = {'svg': 'http://www.w3.org/2000/svg'}
-EXPECTED = {'profile-avatar', 'practice-planning', 'practice-experience', 'practice-collaboration', 'practice-frontend'}
+GENERATED = {f'assets/{name}-{theme}.svg' for name in ('banner', 'signals', 'languages', 'stats') for theme in ('dark', 'light')}
 
 
 def main():
-    referenced = set()
+    reference_sets = []
     for page in ('README.md', 'preview.html'):
-        for name in re.findall(r'(?:src|srcset)="(?:\./)?(assets/[^\"]+)"', (ROOT / page).read_text()):
-            path = ROOT / name
-            assert path.is_file(), f'Missing image: {name}'
-            root = ET.parse(path).getroot()
-            assert path.stat().st_size < 100_000, 'Asset exceeds download budget'
-            assert not root.findall('.//svg:text', NS), 'Visible profile text belongs in README.md'
-            for element in ('image', 'script', 'animate', 'animateMotion'):
-                assert not root.findall(f'.//svg:{element}', NS), f'Unexpected {element} element'
-            assert root.find('svg:title', NS) is not None
-            ids = [node.get('id') for node in root.iter() if node.get('id')]
-            assert len(ids) == len(set(ids)), 'Duplicate SVG identifiers'
-            referenced.add(name)
-    actual = {str(p.relative_to(ROOT)) for p in (ROOT / 'assets').glob('*.svg')}
-    assert actual == referenced, f'Unused artwork: {actual - referenced}'
-    assert {Path(name).stem for name in referenced} == EXPECTED
-    print('Five graphic-only SVGs checked; all visible profile text is editable in README.md')
+        content = (ROOT / page).read_text()
+        references = set(re.findall(r'(?:src|srcset)="(?:\./)?(assets/[^\"]+)"', content))
+        assert references == GENERATED, f'Unexpected artwork references in {page}: {references ^ GENERATED}'
+        reference_sets.append(references)
+    for path in (ROOT / 'assets').glob('*.svg'):
+        root = ET.parse(path).getroot()
+        assert path.stat().st_size < 250_000, f'Asset exceeds download budget: {path.name}'
+        assert root.find('svg:title', NS) is not None, f'Missing title: {path.name}'
+        if str(path.relative_to(ROOT)) in GENERATED:
+            assert root.find('svg:desc', NS) is not None, f'Missing description: {path.name}'
+        for element in ('image', 'script', 'foreignObject', 'animate', 'animateMotion'):
+            assert not root.findall(f'.//svg:{element}', NS), f'Unexpected {element}: {path.name}'
+        ids = [node.get('id') for node in root.iter() if node.get('id')]
+        assert len(ids) == len(set(ids)), f'Duplicate identifiers: {path.name}'
+    portrait = ascii_portrait()
+    assert len(portrait) == 76 and all(len(line) == 120 and line.isascii() for line in portrait)
+    print('Dark/light profile assets, accessibility labels and ASCII portrait validated')
 
 
 if __name__ == '__main__':

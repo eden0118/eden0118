@@ -1,30 +1,39 @@
 # Profile artwork
 
-All visible profile text lives in `README.md`: the name, role, background,
-working-practice headings, collaboration perspectives, and closing line. Edit
-those directly without regenerating any images. Native Markdown headings,
-blockquote, tables, bold text, and italics provide the layout.
+The README follows the terminal-banner, introduction, stack, signals and stats
+layout of [emmi-lili](https://github.com/emmi-lili). Graphics are original and use
+Eden's existing character and profile information.
 
-Only the character and four diagrams are SVG images. They keep the cyan pixel
-style while GitHub supplies the text font, table borders, and theme colors.
-`assets/design.png` supplies the character. Other source images remain intact.
+The banner has a real ASCII portrait generated from `assets/design.png` using
+120 columns and 76 rows of density characters. `scripts/terminal_art.py` renders
+the ASCII lettering into an SVG terminal alongside profile details. Both light
+and dark assets are local and self-contained. GitHub selects the theme through
+`picture` elements. Stack icons and the GitHub badge use external image services.
 
-## Generate graphics
+## Update profile data
+
+Edit `assets/profile.json` to change the banner fields and chart data. Edit the
+prose in `README.md` separately. `preview.html` is a static local preview of the
+README; keep it in sync when changing the profile text or image references.
+
+GitHub statistics and language counts are a public-data snapshot as of the date
+in `profile.json`; they are not automatically refreshed. `source` and
+`repos_source` record the public API endpoints used. Language values count each
+non-fork public repository's primary language, rather than bytes or proficiency.
+The practice map describes working relationships without invented skill scores.
+
+## Regenerate and validate
 
 ```sh
 python3 -m venv /tmp/eden-profile-venv
 /tmp/eden-profile-venv/bin/pip install -r scripts/requirements.txt
 /tmp/eden-profile-venv/bin/python scripts/profile_art.py
-python3 scripts/check_art.py
+/tmp/eden-profile-venv/bin/python scripts/check_art.py
 ```
 
-`scripts/profile_art.py` generates the ordered-dither character.
-`scripts/practice_art.py` generates the four graphic-only diagrams.
-Generation is deterministic and does not modify README text. The SVGs have no
-visible text, animation, JavaScript, raster embeds, or external font dependencies.
-
-`preview.html` is a static preview of the current Markdown using approximate
-GitHub styles; it does not automatically update when README text is edited.
-Use your editor's Markdown preview or GitHub's preview for subsequent text edits.
-The **Check profile art** workflow validates referenced assets and regenerated
-output, including size budgets, unique identifiers, and absence of visible SVG text.
+Generation is deterministic and works offline from the stored profile data.
+`profile_art.py` generates the eight visible terminal assets along with the six
+previous graphic experiments. The earlier assets remain available but are not
+referenced by the README. The validation workflow checks local references,
+size budgets, SVG descriptions, unique identifiers and absence of external embeds
+or scripts. It also checks the ASCII portrait dimensions and character set.

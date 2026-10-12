@@ -3,6 +3,8 @@
 from pathlib import Path
 from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from practice_art import diagrams
+from dossier_art import dossier
+from terminal_art import graphics
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,10 +38,10 @@ def main():
               '<rect width="336" height="320" fill="#101e23"/>' + portrait()
               + '<path d="M4 14V4H14M322 4H332V14M4 306V316H14M322 316H332V306" fill="none" stroke="#b5ccd0"/>'
               '</svg>')
-    output = {'assets/profile-avatar.svg': avatar, **diagrams()}
+    output = {'assets/profile-avatar.svg': avatar, 'assets/profile-dossier.svg': dossier(), **diagrams(), **graphics()}
     for name, content in output.items():
         (ROOT / name).write_text(content)
-    print(f'Generated {len(output)} graphic-only assets; all profile text lives in README.md')
+    print(f'Generated {len(output)} assets, including the pixel identity card')
 
 
 if __name__ == '__main__':
