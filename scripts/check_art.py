@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check continuous SVG motion, lightweight assets, and README references."""
+"""Check the ASCII carousel, connected workflow, and README references."""
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
@@ -27,14 +27,40 @@ def check_cover(path):
         assert all(a < b for a, b in zip(times, times[1:])), 'Invalid interpolation timeline'
         assert len(times) == len(animation.attrib['values'].split(';'))
     clips = root.findall('.//svg:clipPath', NS)
-    assert len(clips) == 4 and all(len(clip.findall('svg:rect', NS)) == 8 for clip in clips)
+    assert not clips, 'The character carousel should crossfade without scanning masks'
+    assert not root.findall('.//svg:use[@class="portrait-noise"]', NS), 'Character noise returned'
     assert 'prefers-reduced-motion' in content and 'portrait-first' in content
     print(f'{path.name}: {path.stat().st_size // 1024} KB, continuous four-scene SVG loop')
+
+
+def check_workflow(path):
+    content = path.read_text()
+    root = ET.fromstring(content)
+    expected = ['structure', 'journey', 'alignment', 'delivery']
+    assert [g.get('data-stage') for g in root.findall('.//svg:g[@data-stage]', NS)] == expected
+    assert [g.get('data-active') for g in root.findall('.//svg:g[@data-active]', NS)] == expected
+    assert not root.findall('.//svg:animateMotion', NS), 'Independent traveling dots returned'
+    assert not root.findall('.//svg:animateTransform', NS), 'Independent sliding shapes returned'
+    assert 'prefers-reduced-motion' in content
+    animations = root.findall('.//svg:animate', NS)
+    assert len(animations) == 4
+    for animation in animations:
+        assert animation.get('attributeName') == 'opacity'
+        assert animation.get('dur') == '28s'
+        times = [float(t) for t in animation.get('keyTimes').split(';')]
+        assert times[0] == 0 and times[-1] == 1
+        assert all(a < b for a, b in zip(times, times[1:]))
+        assert len(times) == len(animation.get('values').split(';'))
+    ids = [node.get('id') for node in root.iter() if node.get('id')]
+    assert len(ids) == len(set(ids)), 'Duplicate SVG identifiers'
+    assert path.stat().st_size < 30_000
+    print(f'{path.name}: four connected stages, shared 28s highlight cycle')
 
 
 def main():
     for suffix in ('', '-dark'):
         check_cover(ROOT / f'assets/design-cover{suffix}.svg')
+        check_workflow(ROOT / f'assets/practice-workflow{suffix}.svg')
     referenced = set()
     for page in ('README.md', 'preview.html'):
         for name in re.findall(r'(?:src|srcset)="(?:\./)?(assets/[^\"]+)"', (ROOT / page).read_text()):
