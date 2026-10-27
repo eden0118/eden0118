@@ -13,25 +13,10 @@ Ever find yourself switching between tools just to finish one task? Or trying to
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/experience-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/experience-light.svg">
-  <img src="assets/experience-dark.svg" width="100%" alt="How an idea takes shape: notice friction and understand people's needs; map requirements, workflows and system rules; explore the solution through prototypes and iteration.">
+  <img src="assets/experience-dark.svg" width="100%" alt="What catches my attention: A workaround people repeat every day, information they keep asking for, or a task that means switching between tools. I start by understanding what they need to accomplish and where the process gets in the way. What goes into the plan: The main workflow is only part of it. I also work through permissions, missing information and interrupted steps, using requirements, UML and architecture diagrams to make the decisions clear enough to discuss. Why I make prototypes: Some questions are easier to answer when there is something to try. Prototypes help me spot gaps and reconsider the scope; experience with system integration and AWS deployment informs the practical side of the plan.">
 </picture>
 
-<details>
-<summary><strong>Where do you start when something feels harder than it should?</strong></summary>
-<p>With the situation people are already in. Who is involved? What are they trying to do? Where do they get stuck? I work through those questions to clarify the need and decide which part is worth tackling first.</p>
-</details>
-
-<details>
-<summary><strong>How does a vague idea become a workable plan?</strong></summary>
-<p>By mapping the steps and making the rules explicit: what belongs in scope, who can do what, and how information moves. User flows, UML and architecture diagrams give everyone something specific to discuss, including what should happen when a step fails or gets interrupted.</p>
-</details>
-
-<details>
-<summary><strong>What happens once the plan is on paper?</strong></summary>
-<p>I use prototypes to explore how the experience would work and revisit the plan when practical constraints emerge. Hands-on experience with interfaces, system integration and AWS architecture and deployment helps me connect the proposed solution to what it would take to run it.</p>
-</details>
-
-<hr/>
+<br/>
 
 <div align="center">
 
@@ -41,7 +26,7 @@ Ever find yourself switching between tools just to finish one task? Or trying to
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/signals-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/signals-light.svg">
-  <img src="assets/signals-dark.svg" width="480" alt="Working practice: planning, user experience, collaboration and front-end, connecting users, business and engineering.">
+  <img src="assets/signals-dark.svg" width="480" alt="Planning connects people, purpose and practical constraints: understand user needs, clarify business priorities and discuss technical feasibility around shared decisions.">
 </picture>
 </td>
 <td width="50%" align="center">

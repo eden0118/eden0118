@@ -34,7 +34,7 @@ the complete portrait without animation. Without CSS support, it is also static.
 | `handle` | 帳號 |
 | `intro` | 三行自介，每個字串各佔一行 |
 | `strengths` | 四項工作方式，`name` 是標題、`description` 是說明 |
-| `experience` | 視覺筆記圖卡，`name` 是標題、`description` 是單行說明、`labels` 是補充關鍵字。可展開的整合性問答直接在 README 維護 |
+| `experience` | 圖文交錯的視覺筆記，`name` 是標題、`description` 是自動換行的內文、`labels` 是補充關鍵字。每列建議不超過四行英文內文；無須點擊展開 |
 
 修改後，執行下方「Regenerate and validate」的指令，同步更新深淺兩版。
 自介目前固定三行、工作方式固定四項；文字不會自動換行，請維持接近原本的
@@ -54,7 +54,8 @@ in `profile.json`; they are not automatically refreshed. `source` and
 `repos_source` record the public API endpoints used. Language counts in the saved snapshot are no longer displayed.
 The design roots panel highlights industrial design, metalwork and exhibition
 planning through form, material and space.
-The practice map describes working relationships without invented skill scores.
+The planning map connects user needs, business priorities and technical feasibility
+around shared decisions, without invented skill scores.
 
 ## Regenerate and validate
 

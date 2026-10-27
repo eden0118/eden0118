@@ -4,6 +4,7 @@ from html import escape
 import json
 import math
 import re
+import textwrap
 from PIL import Image, ImageChops, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,17 +94,16 @@ def banner(data, t):
 
 
 def signals(data, t):
-    p=start(480, 300, 'Working practice', 'Planning, user experience, collaboration and front-end connect users, business and engineering.', t)
-    p.append(text('working practice',24,32,t['accent'],16,weight='600'))
-    nodes=[(134,87,'Planning'),(351,87,'User experience'),(351,221,'Front-end'),(134,221,'Collaboration')]
-    for x,y,_ in nodes:
-        p.append(f'<path d="M240 153L{x} {y}" stroke="{t["line"]}"/>')
-    p.append(f'<circle cx="240" cy="153" r="38" fill="{t["panel"]}" stroke="{t["art"]}"/>')
-    p.append(text('Product',240,158,t['text'],13,'middle'))
-    for x,y,label in nodes:
+    p=start(480, 300, 'Where planning connects', 'User needs, business priorities and technical feasibility inform shared planning decisions.', t)
+    p.append(text('where planning connects',24,32,t['accent'],16,weight='600'))
+    nodes=[(240,88,'People','Needs & context'),(104,220,'Purpose','Priorities & scope'),(376,220,'Practice','Feasibility')]
+    p.append(f'<path d="M240 88 104 220H376Z" fill="{t["art"]}" fill-opacity=".04" stroke="{t["line"]}"/>')
+    for x,y,label,caption in nodes:
+        p.append(f'<path d="M240 158L{x} {y}" stroke="{t["accent"]}" stroke-dasharray="3 5"/>')
         p.append(f'<circle cx="{x}" cy="{y}" r="5" fill="{t["art"]}"/>')
-        p.append(text(label,x,y-16,t['text'],12,'middle'))
-    p += [text('Users / Business / Engineering',240,280,t['muted'],12,'middle'), '</svg>']
+        p += [text(label,x,y-14,t['text'],14,'middle',weight='600'),text(caption,x,y+23,t['muted'],11,'middle')]
+    p.append(f'<rect x="185" y="139" width="110" height="36" rx="4" fill="{t["panel"]}" stroke="{t["art"]}"/>')
+    p += [text('Decisions',240,162,t['text'],13,'middle'),text('Users / Business / Engineering',240,280,t['muted'],12,'middle'), '</svg>']
     return ''.join(p)
 
 
@@ -163,7 +163,7 @@ def stats(data,t):
 def experience(data, t):
     items = data['experience']
     description = ' '.join(f'{item["name"]}: {item["description"]}' for item in items)
-    p = start(980, 98 + len(items) * 128, 'How an idea takes shape', description, t)
+    p = start(980, 98 + len(items) * 208, 'How an idea takes shape', description, t)
     p += [text('How an idea takes shape', 32, 43, t['text'], 24, weight='600'),
           text('observe / map / explore', 32, 68, t['muted'], 12)]
     for j in range(18):
@@ -171,10 +171,11 @@ def experience(data, t):
         y = 29 + (j % 3) * 10
         p.append(f'<rect x="{x}" y="{y}" width="{8 if j % 4 else 20}" height="6" fill="{t["accent"] if j % 3 else t["art"]}" opacity="{.35 + (j % 4) * .2}"/>')
     for i, item in enumerate(items):
-        y = 98 + i * 128
+        y = 98 + i * 208
         p.append(f'<path d="M32 {y-8}H948" stroke="{t["line"]}"/>')
         p.append(text(f'0{i+1}', 34, y + 22, t['accent'], 12))
-        p.append(f'<g transform="translate(76,{y+8})" fill="none" stroke="{t["art"]}" stroke-width="1.5">')
+        icon_x = 756 if i % 2 else 76
+        p.append(f'<g transform="translate({icon_x},{y+48}) scale(1.1)" fill="none" stroke="{t["art"]}" stroke-width="1.5">')
         if i == 0:
             p.append('<path d="M0 8h24v20H0zM64 0h28v20H64zM112 36h24v20h-24zM20 56h30v20H20zM24 18l40-8M78 20l34 26M50 66l62-20"/>')
             p.append(f'<circle cx="77" cy="10" r="27" stroke="{t["accent"]}"/><path d="m96 30 18 18" stroke="{t["accent"]}"/>')
@@ -185,9 +186,11 @@ def experience(data, t):
             p.append('<rect x="0" y="5" width="116" height="74" rx="4"/><path d="M0 22h116M9 13h4m5 0h4m5 0h4M12 35h42v32H12zM65 37h36M65 47h29M65 57h20"/>')
             p.append(f'<path d="m94 60 4 28 8-9 13-1zM134 20v-13h-16M134 7c24 20 22 57-4 72" fill="{t["panel"]}" stroke="{t["accent"]}"/>')
         p.append('</g>')
-        p.append(text(item['name'], 264, y + 28, t['text'], 21, weight='600'))
-        p.append(text(item['description'], 264, y + 55, t['muted'], 14))
-        p.append(text(' / '.join(item['labels']), 264, y + 83, t['accent'], 12))
+        body_x = 64 if i % 2 else 264
+        p.append(text(item['name'], body_x, y + 30, t['text'], 21, weight='600'))
+        for j, line in enumerate(textwrap.wrap(item['description'], width=66)):
+            p.append(text(line, body_x, y + 62 + j * 24, t['muted'], 16))
+        p.append(text(' / '.join(item['labels']), body_x, y + 180, t['accent'], 12))
     p.append('</svg>')
     return ''.join(p)
 
