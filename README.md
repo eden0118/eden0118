@@ -30,12 +30,3 @@
   <source media="(prefers-color-scheme: dark)" srcset="assets/perspective-dark.svg">
   <img src="assets/perspective-light.svg" width="100%" alt="Planning connects people, business priorities and technical feasibility. My design background spans industrial design, metalwork and exhibition planning.">
 </picture>
-
-<picture>
-  <source media="(max-width: 440px) and (prefers-color-scheme: dark)" srcset="assets/toolkit-mobile-dark.svg">
-  <source media="(max-width: 440px)" srcset="assets/toolkit-mobile-light.svg">
-  <source media="(max-width: 899px) and (prefers-color-scheme: dark)" srcset="assets/toolkit-tablet-dark.svg">
-  <source media="(max-width: 899px)" srcset="assets/toolkit-tablet-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/toolkit-dark.svg">
-  <img src="assets/toolkit-light.svg" width="100%" alt="Tools I work with: Figma, draw.io, Rhino, Mermaid, Adobe Creative Cloud and AWS.">
-</picture>

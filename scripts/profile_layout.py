@@ -34,9 +34,22 @@ def canvas(w, h, title, desc, t):
 
 
 def hero(data, t, rows, typewriter, mobile=False, tablet=False):
-    w, h = (600 if tablet else 360, 640) if mobile else (980, 460)
+    w, h = (600, 450) if tablet else (360, 640) if mobile else (980, 460)
     p = canvas(w, h, data['subject'], ' '.join(data['intro']), t)
-    if mobile:
+    if tablet:
+        p.append(f'<rect x="20" y="40" width="252" height="378" rx="6" fill="{t["panel"]}"/>')
+        p.append('<g transform="translate(-5,20) scale(.62)">'+typewriter(rows,t)+'</g>')
+        p += [label(data['subject'],300,56,t['text'],20,600),
+              label(data['role'],300,82,t['muted'],16),
+              label('From everyday',300,143,t['text'],28,600),
+              label('friction to',300,177,t['text'],28,600),
+              label('something useful.',300,211,t['text'],28,600)]
+        y = 260
+        for value in data['intro'][1:]:
+            lines = textwrap.wrap(value,29)
+            p.append(paragraph(value,300,y,29,t,20,26))
+            y += len(lines)*26+12
+    elif mobile:
         p += [label(data['subject'], 24, 32, t['text'], 18, 600),
               label(data['role'], 24, 55, t['muted'], 14),
               label('From everyday friction', 24, 103, t['text'], 28, 600),
@@ -111,14 +124,14 @@ def approach(data, t, mobile=False, tablet=False):
 def perspective(data, t, mobile=False, tablet=False):
     desc = 'Planning connects user needs, business priorities and technical feasibility. Design background: '+', '.join(data['background'])+'.'
     w = (600 if tablet else 360) if mobile else 980
-    p = canvas(w, 568 if mobile else 290, 'A design perspective', desc, t)
+    p = canvas(w, 568 if mobile and not tablet else 290, 'A design perspective', desc, t)
     # Two related diagrams share one canvas instead of competing full-width cards.
-    if mobile:
+    if mobile and not tablet:
         centers, origins = [(w/2, 152), (w/2, 416)], [(24, 36), (24, 310)]
         p.append(f'<path d="M24 278H{w-24}" stroke="{t["line"]}"/>')
     else:
-        centers, origins = [(242, 152), (734, 152)], [(32, 36), (524, 36)]
-        p.append(f'<path d="M490 32V258" stroke="{t["line"]}"/>')
+        centers, origins = ([(150,152),(450,152)],[(24,36),(324,36)]) if tablet else ([(242, 152), (734, 152)], [(32, 36), (524, 36)])
+        p.append(f'<path d="M{w/2} 32V258" stroke="{t["line"]}"/>')
     x, y = origins[0]
     p.append(label('A shared plan', x, y, t['text'], 22, 600))
     cx, cy = centers[0]
@@ -129,7 +142,7 @@ def perspective(data, t, mobile=False, tablet=False):
         p.append(f'<circle cx="{nx}" cy="{ny}" r="4" fill="{t["accent"]}"/>')
         # Keep captions outside the triangle so its edges do not cross text.
         title_y, caption_y = (ny-36,ny-15) if i == 0 else (ny+25,ny+45)
-        p += [label(word,nx,title_y,t['text'],18 if mobile else 16,600,anchor='middle'),label(caption,nx,caption_y,t['muted'],16 if mobile else 14,anchor='middle')]
+        p += [label(word,nx,title_y,t['text'],18 if mobile and not tablet else 16,600,anchor='middle'),label(caption,nx,caption_y,t['muted'],16 if mobile and not tablet else 14,anchor='middle')]
     p.append(f'<rect x="{cx-45}" y="{cy-7}" width="90" height="29" rx="4" fill="{t["panel"]}"/>')
     p.append(label('Decisions',cx,cy+13,t['text'],14,anchor='middle'))
     x,y = origins[1]
@@ -167,7 +180,7 @@ def profile_graphics(data, rows, typewriter):
 def toolkit(data, t, mobile=False, tablet=False):
     w = (600 if tablet else 360) if mobile else 980
     tools = data['tools']
-    cols = 2 if mobile else 3
+    cols = 2 if mobile and not tablet else 3
     row_count = (len(tools)+cols-1)//cols
     description = ', '.join(tool.get('accessible_name',tool['name']) for tool in tools)+'.'
     p = canvas(w, 64+row_count*52, 'Tools I work with', description,t)

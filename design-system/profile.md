@@ -24,6 +24,10 @@ Mobile
 
 Panels use a 980-unit desktop, 600-unit intermediate or 360-unit phone width.
 Phone sources apply through 440px; intermediate sources apply through 899px.
+The intermediate hero retains side-by-side portrait and introduction, its two
+perspective diagrams stay side by side, and tools use three columns. Only the
+phone stacks those sections; intermediate planning notes remain one readable
+column.
 The phone/intermediate body sizes account for image scaling so rendered body
 text stays at least 16px in the local 320–1024px review matrix.
 Use a clear hierarchy and bounded text
