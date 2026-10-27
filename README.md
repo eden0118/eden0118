@@ -26,6 +26,9 @@
   <img src="assets/perspective-dark.svg" width="100%" alt="Planning connects people, business priorities and technical feasibility. My design background spans industrial design, metalwork and exhibition planning.">
 </picture>
 
+<br/>
+<br/>
+
 <p align="center">
   <img src="assets/badge-ux.svg" height="28" alt="UX Design">
   <img src="assets/badge-system-planning.svg" height="28" alt="System Planning">
