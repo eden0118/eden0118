@@ -7,31 +7,15 @@ individual projects. The ASCII character is the identifying visual.
 ## Composition
 
 ```text
-Desktop
-  ASCII portrait      Name / role / short positioning / background
-  Observe             Plan                  Explore
-  Shared decisions                         Design origins
-                  Skills and tools
-
-Mobile
-  Identity and positioning
-  ASCII portrait
-  Background
-  Observe / Plan / Explore, stacked
-  Shared decisions / Design origins, stacked
-  Two-column tool grid
+ASCII portrait      Name / role / short positioning / background
+Observe             Plan                  Explore
+Shared decisions                         Design origins
 ```
 
-Panels use a 980-unit desktop, 600-unit intermediate or 360-unit phone width.
-Phone sources apply through 440px; intermediate sources apply through 899px.
-The intermediate hero retains side-by-side portrait and introduction, its two
-perspective diagrams stay side by side, and tools use three columns. Only the
-phone stacks those sections; intermediate planning notes remain one readable
-column.
-The phone/intermediate body sizes account for image scaling so rendered body
-text stays at least 16px in the local 320–1024px review matrix.
-Use a clear hierarchy and bounded text
-lengths rather than enlarging small standalone charts to fill the page.
+The README uses one 980-unit desktop composition at every viewport width.
+Only theme and reduced-motion preferences select alternate sources; there are
+no phone or intermediate breakpoints. Content narrows proportionally with its
+container. Tool icons are an optional desktop panel, currently omitted from README.
 
 ## Tokens
 
@@ -68,7 +52,6 @@ required.
 alternatives. Preview content is generated from README, without special layout
 that would only work outside GitHub.
 
-Browser review covers Chromium and WebKit in dark/light at 320, 375, 414, 440,
-441, 600, 601, 768, 899, 900 and 1024px, including variant boundaries,
-rendered paragraph size, source selection and horizontal overflow.
+Verify desktop light/dark compositions, text bounds and reduced-motion source
+selection. Different viewport widths must keep the same desktop source.
 The local preview approximates the README content area, not all GitHub chrome.

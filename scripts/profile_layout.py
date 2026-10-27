@@ -1,4 +1,4 @@
-"""GitHub-compatible profile panels with phone, intermediate and desktop layouts."""
+"""GitHub-compatible profile panels; generation uses the desktop composition."""
 from html import escape
 import textwrap
 import re
@@ -166,14 +166,12 @@ def perspective(data, t, mobile=False, tablet=False):
 def profile_graphics(data, rows, typewriter):
     output = {}
     for theme, t in PALETTES.items():
-        for variant in ('', '-mobile', '-tablet'):
-            mobile, tablet = bool(variant), variant == '-tablet'
-            suffix = variant+'-'+theme+'.svg'
-            output['assets/banner'+suffix] = hero(data,t,rows,typewriter,mobile,tablet)
-            output['assets/banner-static'+suffix] = hero(data,t,rows,static_portrait,mobile,tablet)
-            output['assets/experience'+suffix] = approach(data,t,mobile,tablet)
-            output['assets/perspective'+suffix] = perspective(data,t,mobile,tablet)
-            output['assets/toolkit'+suffix] = toolkit(data,t,mobile,tablet)
+        suffix = '-'+theme+'.svg'
+        output['assets/banner'+suffix] = hero(data,t,rows,typewriter)
+        output['assets/banner-static'+suffix] = hero(data,t,rows,static_portrait)
+        output['assets/experience'+suffix] = approach(data,t)
+        output['assets/perspective'+suffix] = perspective(data,t)
+        output['assets/toolkit'+suffix] = toolkit(data,t)
     return output
 
 
