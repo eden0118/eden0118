@@ -39,4 +39,21 @@ Ever find yourself switching between tools just to finish one task? Or trying to
 </tr>
 </table>
 
+<br/>
+
+<p align="center">
+  <sub>Focus</sub><br><br>
+  <img src="assets/badge-ux.svg" height="28" alt="UX Design">
+  <img src="assets/badge-system-planning.svg" height="28" alt="System Planning">
+  <img src="assets/badge-prototyping.svg" height="28" alt="Prototyping">
+</p>
+
+<p align="center">
+  <sub>Tools &amp; platforms</sub><br><br>
+  <img src="assets/badge-drawio.svg" height="28" alt="draw.io">
+  <img src="assets/badge-figma.svg" height="28" alt="Figma">
+  <img src="assets/badge-mermaid.svg" height="28" alt="Mermaid">
+  <img src="assets/badge-aws.svg" height="28" alt="AWS">
+</p>
+
 </div>

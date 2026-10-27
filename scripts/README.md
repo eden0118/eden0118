@@ -22,6 +22,12 @@ the complete portrait without animation. Without CSS support, it is also static.
 
 ## Update profile data
 
+Tool badges beneath the banner are local SVGs from Shields.io in the
+`assets/badge-*.svg` files. README groups UX Design, System Planning and Prototyping
+separately from draw.io, Figma, Mermaid and AWS. They identify
+tools and methods, not certifications or proficiency scores. Artwork generation
+preserves them; their order and labels are maintained in README.
+
 ### 修改 Banner 文字
 
 文字來源是 `assets/profile.json`，不需要直接編輯 `banner-light.svg` 或

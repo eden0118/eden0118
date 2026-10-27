@@ -9,6 +9,7 @@ from preview import check_preview
 ROOT = Path(__file__).resolve().parents[1]
 NS = {'svg': 'http://www.w3.org/2000/svg'}
 GENERATED = {f'assets/{name}-{theme}.svg' for name in ('banner', 'signals', 'roots', 'experience') for theme in ('dark', 'light')}
+BADGES = {f'assets/badge-{name}.svg' for name in ('drawio', 'figma', 'mermaid', 'aws', 'ux', 'system-planning', 'prototyping')}
 
 
 def main():
@@ -17,7 +18,8 @@ def main():
     for page in ('README.md', 'preview.html'):
         content = (ROOT / page).read_text()
         references = set(re.findall(r'(?:src|srcset)="(?:\./)?(assets/[^\"]+)"', content))
-        assert references == GENERATED, f'Unexpected artwork references in {page}: {references ^ GENERATED}'
+        expected = GENERATED | BADGES
+        assert references == expected, f'Unexpected artwork references in {page}: {references ^ expected}'
         reference_sets.append(references)
     for path in (ROOT / 'assets').glob('*.svg'):
         root = ET.parse(path).getroot()
