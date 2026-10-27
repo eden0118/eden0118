@@ -4,7 +4,6 @@ from html import escape
 import json
 import math
 import re
-import textwrap
 from PIL import Image, ImageChops, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,42 +53,19 @@ def typewriter(rows, t):
             '@keyframes typing-cursor{' + ''.join(cursor) + '}',
             f'.typing-cursor{{animation:typing-cursor {duration}s steps(120,end) infinite}}',
             '@media(prefers-reduced-motion:reduce){.type-mask{animation:none;width:360px}.typing-cursor{display:none}}']
+    # A separate static group avoids dependence on animated clip geometry when
+    # embedded-image renderers evaluate reduced-motion preferences.
+    css.append('.ascii-static{display:none}@media(prefers-reduced-motion:reduce){.ascii-static{display:inline}.ascii-animated{display:none}}')
     p = ['<style>' + ''.join(css) + '</style><defs>' + ''.join(clips) + '</defs>',
-         f'<g fill="{t["art"]}" font-family="{FONT}" font-size="5" xml:space="preserve">']
+         f'<g class="ascii-animated" fill="{t["art"]}" font-family="{FONT}" font-size="5" xml:space="preserve">']
     for i, line in visible:
         runs = ''.join(f'<tspan x="{64 + match.start()*3}">{escape(match[0])}</tspan>' for match in re.finditer(r'[^ ]+', line))
         p.append(f'<text y="{151+i*5}" clip-path="url(#row-{i})">{runs}</text>')
+    p += ['</g>', f'<g class="ascii-static" fill="{t["art"]}" font-family="{FONT}" font-size="5" xml:space="preserve">']
+    for i, line in visible:
+        runs = ''.join(f'<tspan x="{64 + match.start()*3}">{escape(match[0])}</tspan>' for match in re.finditer(r'[^ ]+', line))
+        p.append(f'<text y="{151+i*5}">{runs}</text>')
     p += ['</g>', f'<rect class="typing-cursor" x="64" y="146" width="2" height="6" fill="{t["accent"]}" opacity="0" aria-hidden="true"/>']
-    return ''.join(p)
-
-
-def banner(data, t):
-    description = ' '.join(data['intro']) + ' How I work: ' + ' '.join(f'{item["name"]}: {item["description"]}' for item in data['strengths'])
-    p = start(1180, 610, 'Eden Chang · profile.sh --live', description, t)
-    p += [f'<rect x="14" y="14" width="1152" height="582" rx="14" fill="{t["panel"]}" stroke="{t["line"]}"/>',
-          f'<path d="M14 62H1166" stroke="{t["line"]}"/>']
-    for x, color in [(38, '#ff5f57'), (59, '#febc2e'), (80, '#28c840')]:
-        p.append(f'<circle cx="{x}" cy="38" r="6" fill="{color}"/>')
-    p.append(text('profile.sh --live', 590, 43, t['muted'], 13, 'middle'))
-    for x, w, heading in [(34, 420, 'VISUAL.MAP'), (474, 672, 'SYSTEM.INFO')]:
-        p += [f'<rect x="{x}" y="88" width="{w}" height="474" rx="6" fill="none" stroke="{t["line"]}"/>',
-              f'<path d="M{x} 124h{w}" stroke="{t["line"]}"/>', text(heading, x+16, 111, t['accent'], 13, weight='700')]
-    p += [text('ASCII / 120x76', 437, 111, t['muted'], 11, 'end'), text('@'+data['handle'], 1128, 111, t['accent'], 13, 'end')]
-    p.append(typewriter(ascii_portrait(), t))
-    p += [f'<path d="M49 150v-12h12M427 138h12v12M49 521v12h12M427 533h12v-12" fill="none" stroke="{t["accent"]}"/>', text('CHARACTER / ASCII DENSITY MAP', 58, 550, t['muted'], 10)]
-    fields = [('Subject', data['subject']), ('Role', data['role'])]
-    for i, (key, value) in enumerate(fields):
-        y = 153+i*24
-        p += [text(key, 491, y, t['muted']), f'<path d="M628 {y-4}H{1116-len(value)*8.5}" stroke="{t["line"]}" stroke-dasharray="1 4"/>', text(value, 1128, y, t['text'], anchor='end')]
-    for i, line in enumerate(data['intro']):
-        p.append(text(line, 491, 209+i*20, t['muted'], 13))
-    p.append(f'<path d="M491 269H1128" stroke="{t["line"]}"/>')
-    p.append(text('HOW I WORK', 491, 291, t['accent'], 12, weight='600'))
-    for i, item in enumerate(data['strengths']):
-        y = 320+i*49
-        p.append(text(item['name'], 491, y, t['text'], 14, weight='600'))
-        p.append(text(item['description'], 491, y+19, t['muted'], 13))
-    p += [f'<path d="M491 524H1128" stroke="{t["line"]}"/>',text('● BUILDING / LEARNING / EXPLORING',491,548,t['green'],11), text('PRODUCT DEVELOPMENT',1128,548,t['muted'],11,'end'), '</svg>']
     return ''.join(p)
 
 
@@ -160,44 +136,12 @@ def stats(data,t):
     return ''.join(p)
 
 
-def experience(data, t):
-    items = data['experience']
-    description = ' '.join(f'{item["name"]}: {item["description"]}' for item in items)
-    p = start(980, 98 + len(items) * 208, 'How an idea takes shape', description, t)
-    p += [text('How an idea takes shape', 32, 43, t['text'], 24, weight='600'),
-          text('observe / map / explore', 32, 68, t['muted'], 12)]
-    for j in range(18):
-        x = 724 + j * 12
-        y = 29 + (j % 3) * 10
-        p.append(f'<rect x="{x}" y="{y}" width="{8 if j % 4 else 20}" height="6" fill="{t["accent"] if j % 3 else t["art"]}" opacity="{.35 + (j % 4) * .2}"/>')
-    for i, item in enumerate(items):
-        y = 98 + i * 208
-        p.append(f'<path d="M32 {y-8}H948" stroke="{t["line"]}"/>')
-        p.append(text(f'0{i+1}', 34, y + 22, t['accent'], 12))
-        icon_x = 756 if i % 2 else 76
-        p.append(f'<g transform="translate({icon_x},{y+48}) scale(1.1)" fill="none" stroke="{t["art"]}" stroke-width="1.5">')
-        if i == 0:
-            p.append('<path d="M0 8h24v20H0zM64 0h28v20H64zM112 36h24v20h-24zM20 56h30v20H20zM24 18l40-8M78 20l34 26M50 66l62-20"/>')
-            p.append(f'<circle cx="77" cy="10" r="27" stroke="{t["accent"]}"/><path d="m96 30 18 18" stroke="{t["accent"]}"/>')
-        elif i == 1:
-            p.append('<path d="M0 32h32v24H0zM62 0h40v24H62zM62 64h40v24H62zM32 44h16V12h14M48 44v32h14M102 12h32v64h-32"/>')
-            p.append(f'<path d="M7 44h18M70 12h24M70 76h24" stroke="{t["accent"]}"/>')
-        else:
-            p.append('<rect x="0" y="5" width="116" height="74" rx="4"/><path d="M0 22h116M9 13h4m5 0h4m5 0h4M12 35h42v32H12zM65 37h36M65 47h29M65 57h20"/>')
-            p.append(f'<path d="m94 60 4 28 8-9 13-1zM134 20v-13h-16M134 7c24 20 22 57-4 72" fill="{t["panel"]}" stroke="{t["accent"]}"/>')
-        p.append('</g>')
-        body_x = 64 if i % 2 else 264
-        p.append(text(item['name'], body_x, y + 30, t['text'], 21, weight='600'))
-        for j, line in enumerate(textwrap.wrap(item['description'], width=66)):
-            p.append(text(line, body_x, y + 62 + j * 24, t['muted'], 16))
-        p.append(text(' / '.join(item['labels']), body_x, y + 180, t['accent'], 12))
-    p.append('</svg>')
-    return ''.join(p)
-
-
 def graphics():
     data=json.loads((ROOT/'assets/profile.json').read_text())
-    return {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('banner',banner),('signals',signals),('roots',roots),('stats',stats),('experience',experience)]}
+    from profile_layout import profile_graphics
+    output = {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('signals',signals),('roots',roots),('stats',stats)]}
+    output.update(profile_graphics(data, ascii_portrait(), typewriter))
+    return output
 
 
 if __name__ == '__main__':

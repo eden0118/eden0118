@@ -34,30 +34,27 @@
   ],
   "experience": [
     {
-      "name": "What catches my attention",
-      "description": "A workaround people repeat every day, information they keep asking for, or a task that means switching between tools. I start by understanding what they need to accomplish and where the process gets in the way.",
+      "name": "Notice the friction",
+      "description": "Repeated workarounds and scattered information make me curious. I look at who needs help and where the task gets difficult.",
       "labels": [
-        "Context",
-        "People",
-        "Needs"
+        "People & context",
+        "User experience"
       ]
     },
     {
-      "name": "What goes into the plan",
-      "description": "The main workflow is only part of it. I also work through permissions, missing information and interrupted steps, using requirements, UML and architecture diagrams to make the decisions clear enough to discuss.",
+      "name": "Make the plan clear",
+      "description": "I clarify scope, permissions and exceptions, then use workflows and UML to make the plan easier to discuss.",
       "labels": [
-        "Product requirements",
-        "User flows & UML",
-        "System architecture"
+        "Requirements",
+        "UML & architecture"
       ]
     },
     {
-      "name": "Why I make prototypes",
-      "description": "Some questions are easier to answer when there is something to try. Prototypes help me spot gaps and reconsider the scope; experience with system integration and AWS deployment informs the practical side of the plan.",
+      "name": "Try the idea",
+      "description": "Prototypes help me spot gaps and revisit the scope. System integration and AWS experience inform the practical side.",
       "labels": [
-        "Interaction design",
-        "Working prototypes",
-        "Iteration"
+        "Prototyping",
+        "System integration"
       ]
     }
   ],

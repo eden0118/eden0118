@@ -8,7 +8,7 @@ from preview import check_preview
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = {'svg': 'http://www.w3.org/2000/svg'}
-GENERATED = {f'assets/{name}-{theme}.svg' for name in ('banner', 'signals', 'roots', 'experience') for theme in ('dark', 'light')}
+GENERATED = {f'assets/{name}{mobile}-{theme}.svg' for name in ('banner', 'banner-static', 'experience', 'perspective') for mobile in ('', '-mobile') for theme in ('dark', 'light')}
 BADGES = {f'assets/badge-{name}.svg' for name in ('drawio', 'figma', 'mermaid', 'aws', 'ux', 'system-planning', 'prototyping')}
 
 
