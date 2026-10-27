@@ -1,7 +1,9 @@
-"""GitHub-compatible profile panels: one visual system, two reading widths."""
+"""GitHub-compatible profile panels with phone, intermediate and desktop layouts."""
 from html import escape
 import textwrap
 import re
+from pathlib import Path
+import xml.etree.ElementTree as ET
 
 SANS = 'Arial,Helvetica,sans-serif'
 MONO = 'ui-monospace,SFMono-Regular,Consolas,monospace'
@@ -30,21 +32,24 @@ def canvas(w, h, title, desc, t):
             f'<rect width="{w}" height="{h}" rx="12" fill="{t["bg"]}"/>']
 
 
-def hero(data, t, rows, typewriter, mobile=False):
-    w, h = (360, 620) if mobile else (980, 460)
+def hero(data, t, rows, typewriter, mobile=False, tablet=False):
+    w, h = (600 if tablet else 360, 640) if mobile else (980, 460)
     p = canvas(w, h, data['subject'], ' '.join(data['intro']), t)
     if mobile:
         p += [label(data['subject'], 24, 32, t['text'], 18, 600),
               label(data['role'], 24, 55, t['muted'], 14),
               label('From everyday friction', 24, 103, t['text'], 28, 600),
               label('to something useful.', 24, 138, t['text'], 28, 600)]
-        p.append(f'<rect x="20" y="166" width="320" height="270" rx="6" fill="{t["panel"]}"/>')
-        p.append('<g transform="translate(-14,35) scale(.8)">'+typewriter(rows,t)+'</g>')
-        y = 480
+        p.append(f'<rect x="20" y="166" width="{w-40}" height="230" rx="6" fill="{t["panel"]}"/>')
+        scale = .8 if tablet else .7
+        offset_x, offset_y = w/2-244*scale, 190-216*scale
+        p.append(f'<g transform="translate({offset_x},{offset_y}) scale({scale})">'+typewriter(rows,t)+'</g>')
+        y = 440
         for value in data['intro'][1:]:
-            lines = textwrap.wrap(value, 38)
-            p.append(paragraph(value, 24, y, 38, t, 16, 24))
-            y += len(lines) * 24 + 12
+            measure, size, leading = (42,24,32) if tablet else (29,20,28)
+            lines = textwrap.wrap(value, measure)
+            p.append(paragraph(value, 24, y, measure, t, size, leading))
+            y += len(lines) * leading + 16
     else:
         p.append(f'<rect x="24" y="24" width="392" height="412" rx="8" fill="{t["panel"]}"/>')
         p += [label('eden / profile', 48, 58, t['muted'], 12, mono=True),
@@ -76,37 +81,40 @@ def sketch(kind, x, y, t, scale=1):
     return ''.join(p) + '</g>'
 
 
-def approach(data, t, mobile=False):
+def approach(data, t, mobile=False, tablet=False):
     items = data['experience']
     desc = ' '.join(item['name']+': '+item['description'] for item in items)
-    w, h = (360, 704) if mobile else (980, 424)
+    measure, size, leading = (42,24,34) if tablet else (28,20,30)
+    row_heights = [len(textwrap.wrap(item['description'],measure))*leading+100 for item in items]
+    w, h = (600 if tablet else 360, 100+sum(row_heights)) if mobile else (980, 460)
     p = canvas(w, h, 'How an idea takes shape', desc, t)
     p.append(label('How an idea takes shape', 24 if mobile else 32, 42, t['text'], 24, 600))
     if not mobile:
         p.append(f'<path d="M48 92H932" stroke="{t["line"]}"/>')
     for i, item in enumerate(items):
-        x, y = (24, 100+i*200) if mobile else (32+i*316, 92)
+        x, y = (24, 100+sum(row_heights[:i])) if mobile else (32+i*316, 92)
         if mobile:
-            p.append(f'<path d="M24 {y-22}H336" stroke="{t["line"]}"/>')
-            p.append(sketch(i, 284, y-12, t, .28))
+            p.append(f'<path d="M24 {y-22}H{w-24}" stroke="{t["line"]}"/>')
+            p.append(sketch(i, w-76, y-12, t, .28))
             p.append(label(item['name'], x, y+20, t['text'], 21, 600))
-            p.append(paragraph(item['description'], x, y+58, 38, t, 16, 25))
+            p.append(paragraph(item['description'], x, y+58, measure, t, size, leading))
         else:
             p.append(f'<circle cx="{x+8}" cy="{y}" r="5" fill="{t["accent"]}"/>')
             p.append(sketch(i, x+24, y+38, t, .72))
             p.append(label(item['name'], x, y+154, t['text'], 23, 600))
-            p.append(paragraph(item['description'], x, y+187, 30, t, 18, 26))
+            p.append(paragraph(item['description'], x, y+187, 27, t, 20, 29))
     p.append('</svg>')
     return ''.join(p)
 
 
-def perspective(data, t, mobile=False):
+def perspective(data, t, mobile=False, tablet=False):
     desc = 'Planning connects user needs, business priorities and technical feasibility. Design background: '+', '.join(data['background'])+'.'
-    p = canvas(360 if mobile else 980, 568 if mobile else 290, 'A design perspective', desc, t)
+    w = (600 if tablet else 360) if mobile else 980
+    p = canvas(w, 568 if mobile else 290, 'A design perspective', desc, t)
     # Two related diagrams share one canvas instead of competing full-width cards.
     if mobile:
-        centers, origins = [(180, 152), (180, 416)], [(24, 36), (24, 310)]
-        p.append(f'<path d="M24 278H336" stroke="{t["line"]}"/>')
+        centers, origins = [(w/2, 152), (w/2, 416)], [(24, 36), (24, 310)]
+        p.append(f'<path d="M24 278H{w-24}" stroke="{t["line"]}"/>')
     else:
         centers, origins = [(242, 152), (734, 152)], [(32, 36), (524, 36)]
         p.append(f'<path d="M490 32V258" stroke="{t["line"]}"/>')
@@ -115,10 +123,12 @@ def perspective(data, t, mobile=False):
     cx, cy = centers[0]
     points = [(cx,cy-55,'People','Needs'),(cx-104,cy+53,'Purpose','Priorities'),(cx+104,cy+53,'Practice','Feasibility')]
     p.append(f'<path d="M{cx} {cy-55} {cx-104} {cy+53}H{cx+104}Z" stroke="{t["line"]}" fill="none"/>')
-    for nx,ny,word,caption in points:
+    for i,(nx,ny,word,caption) in enumerate(points):
         p.append(f'<path d="M{cx} {cy+8}L{nx} {ny}" stroke="{t["art"]}"/>')
         p.append(f'<circle cx="{nx}" cy="{ny}" r="4" fill="{t["accent"]}"/>')
-        p += [label(word,nx,ny-13,t['text'],16,600,anchor='middle'),label(caption,nx,ny+23,t['muted'],14,anchor='middle')]
+        # Keep captions outside the triangle so its edges do not cross text.
+        title_y, caption_y = (ny-36,ny-15) if i == 0 else (ny+25,ny+45)
+        p += [label(word,nx,title_y,t['text'],18 if mobile else 16,600,anchor='middle'),label(caption,nx,caption_y,t['muted'],16 if mobile else 14,anchor='middle')]
     p.append(f'<rect x="{cx-45}" y="{cy-7}" width="90" height="29" rx="4" fill="{t["panel"]}"/>')
     p.append(label('Decisions',cx,cy+13,t['text'],14,anchor='middle'))
     x,y = origins[1]
@@ -142,13 +152,43 @@ def perspective(data, t, mobile=False):
 def profile_graphics(data, rows, typewriter):
     output = {}
     for theme, t in PALETTES.items():
-        for mobile in (False, True):
-            suffix = ('-mobile' if mobile else '')+'-'+theme+'.svg'
-            output['assets/banner'+suffix] = hero(data,t,rows,typewriter,mobile)
-            output['assets/banner-static'+suffix] = hero(data,t,rows,static_portrait,mobile)
-            output['assets/experience'+suffix] = approach(data,t,mobile)
-            output['assets/perspective'+suffix] = perspective(data,t,mobile)
+        for variant in ('', '-mobile', '-tablet'):
+            mobile, tablet = bool(variant), variant == '-tablet'
+            suffix = variant+'-'+theme+'.svg'
+            output['assets/banner'+suffix] = hero(data,t,rows,typewriter,mobile,tablet)
+            output['assets/banner-static'+suffix] = hero(data,t,rows,static_portrait,mobile,tablet)
+            output['assets/experience'+suffix] = approach(data,t,mobile,tablet)
+            output['assets/perspective'+suffix] = perspective(data,t,mobile,tablet)
+            output['assets/toolkit'+suffix] = toolkit(t,mobile,tablet)
     return output
+
+
+def toolkit(t, mobile=False, tablet=False):
+    w = (600 if tablet else 360) if mobile else 980
+    p = canvas(w, 330 if mobile else 228, 'Focus and tools',
+               'UX Design, System Planning and Prototyping. Tools: draw.io, Figma, Mermaid, AWS, Rhino and Adobe Creative Cloud.',t)
+    p.append(label('Focus',24 if mobile else 32,32,t['muted'],14))
+    focus = [('UX Design',88),('System Planning',122),('Prototyping',102)]
+    x = (w-sum(width for _,width in focus)-8)/2
+    for word,width in focus:
+        p.append(f'<rect x="{x}" y="48" width="{width}" height="32" rx="4" fill="{t["panel"]}"/>')
+        p.append(label(word,x+width/2,69,t['text'],13,600,anchor='middle'))
+        x += width+4
+    p.append(label('Tools & platforms',24 if mobile else 32,116,t['muted'],14))
+    ns = 'http://www.w3.org/2000/svg'
+    ET.register_namespace('',ns)
+    cols = 2 if mobile else 3
+    cell_w = (w-48)/cols if mobile else 244
+    start_x = 24 if mobile else (w-cell_w*cols)/2
+    for i,name in enumerate(['drawio','figma','mermaid','aws','rhino','adobe']):
+        root = ET.parse(Path(__file__).resolve().parents[1]/f'assets/badge-{name}.svg').getroot()
+        bw = float(root.get('width'))
+        # SVG children remain editable paths/text, with original logo proportions.
+        group = ET.Element('{'+ns+'}g',{'transform':f'translate({start_x+(i%cols)*cell_w+(cell_w-bw)/2},{140+(i//cols)*54})'})
+        group.extend(list(root))
+        p.append(ET.tostring(group,encoding='unicode'))
+    p.append('</svg>')
+    return ''.join(p)
 
 
 def static_portrait(rows, t):

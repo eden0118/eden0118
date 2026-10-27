@@ -19,11 +19,14 @@ Mobile
   Background
   Observe / Plan / Explore, stacked
   Shared decisions / Design origins, stacked
-  Wrapping badges
+  Two-column tool grid
 ```
 
-All panels use the same 980-unit desktop or 360-unit mobile width. Wide panels
-switch to the mobile source at 600px. Use a clear hierarchy and bounded text
+Panels use a 980-unit desktop, 600-unit intermediate or 360-unit phone width.
+Phone sources apply through 440px; intermediate sources apply through 899px.
+The phone/intermediate body sizes account for image scaling so rendered body
+text stays at least 16px in the local 320–1024px review matrix.
+Use a clear hierarchy and bounded text
 lengths rather than enlarging small standalone charts to fill the page.
 
 ## Tokens
@@ -49,7 +52,8 @@ required.
   static source at the parent `picture`, alongside the SVG's own media fallback.
 - Three process columns share a track rather than individual card borders.
 - Two conceptual diagrams share one panel. They do not express measured scores.
-- Badges use a common neutral backing; retain their original symbol geometry.
+- Badges use a common neutral backing and a fixed grid; retain original symbol
+  geometry. The AWS mark uses a light inset for its original dark lettering.
 - No project list, invented metrics, oversized H1 name or repeated section tags.
 
 ## Implementation and verification
@@ -59,6 +63,7 @@ required.
 alternatives. Preview content is generated from README, without special layout
 that would only work outside GitHub.
 
-Browser review covers dark/light at 375, 390, 768 and 1100px, correct mobile
-sources, text bounds, reduced motion and the normal animation's completed frame.
+Browser review covers Chromium and WebKit in dark/light at 320, 375, 414, 440,
+441, 600, 601, 768, 899, 900 and 1024px, including variant boundaries,
+rendered paragraph size, source selection and horizontal overflow.
 The local preview approximates the README content area, not all GitHub chrome.
