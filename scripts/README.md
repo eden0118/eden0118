@@ -21,11 +21,11 @@ the animated SVG also includes its own reduced-motion fallback.
 
 ## Update profile data
 
-Tool badges are assembled into a responsive `toolkit` panel, using two columns
-on phones/intermediate widths and three on desktop. Individual badge sources
+The `Tools I work with` panel presents icons and names as a supporting tool
+list, in two columns on phones/intermediate widths and three on desktop. It
+omits capability labels and purpose captions. Individual badge sources
 are local `assets/badge-*.svg` files from Shields.io, with AWS and Adobe marks
-from `assets/icons/`. The panel separates UX Design, System Planning and
-Prototyping from draw.io, Figma, Mermaid, AWS, Rhino and Adobe Creative Cloud. They identify
+from `assets/icons/`. The panel lists draw.io, Figma, Mermaid, AWS, Rhino and Adobe Creative Cloud. They identify
 tools and methods, not certifications or proficiency scores. Their backing
 color is normalized to fit the profile palette. Artwork generation
 preserves the source badges; order and layout live in `profile_layout.py`.
@@ -47,6 +47,7 @@ Shields.io `rhinoceros` logo. Original mark proportions and colors are retained.
 | `handle` | 帳號 |
 | `intro` | 第一筆用於圖片說明，其餘自介自動換行顯示於姓名與職稱下方 |
 | `strengths` | 舊版資料保留，已不顯示於 Banner |
+| `tools` | 工具清單與順序，`key` 對應圖示檔名、`name` 是顯示名稱；工具區高度隨數量自動調整 |
 | `experience` | 三個規劃步驟，`name` 是短標題、`description` 是自動換行的說明；`labels` 是保留的舊版資料，目前不顯示 |
 
 修改後，執行下方「Regenerate and validate」的指令，同步更新深淺兩版。

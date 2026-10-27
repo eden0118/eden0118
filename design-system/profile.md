@@ -52,8 +52,9 @@ required.
   static source at the parent `picture`, alongside the SVG's own media fallback.
 - Three process columns share a track rather than individual card borders.
 - Two conceptual diagrams share one panel. They do not express measured scores.
-- Badges use a common neutral backing and a fixed grid; retain original symbol
-  geometry. The AWS mark uses a light inset for its original dark lettering.
+- The toolkit uses a fixed grid of equal-size icons with readable names, without capability pills or
+  purpose captions. White brand marks use neutral backing; the AWS mark uses a
+  light inset for its original dark lettering. Keep original symbol geometry.
 - No project list, invented metrics, oversized H1 name or repeated section tags.
 
 ## Implementation and verification

@@ -75,5 +75,32 @@
       "name": "Structured thinking",
       "description": "Work out the workflows, priorities and next steps behind an idea."
     }
+  ],
+  "tools": [
+    {
+      "key": "figma",
+      "name": "Figma"
+    },
+    {
+      "key": "drawio",
+      "name": "draw.io"
+    },
+    {
+      "key": "rhino",
+      "name": "Rhino"
+    },
+    {
+      "key": "mermaid",
+      "name": "Mermaid"
+    },
+    {
+      "key": "adobe",
+      "name": "Adobe",
+      "accessible_name": "Adobe Creative Cloud"
+    },
+    {
+      "key": "aws",
+      "name": "AWS"
+    }
   ]
 }

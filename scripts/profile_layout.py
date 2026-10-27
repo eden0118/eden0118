@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 
 SANS = 'Arial,Helvetica,sans-serif'
 MONO = 'ui-monospace,SFMono-Regular,Consolas,monospace'
+ICON_SURFACE = '#293347'  # Backing for the original white monochrome brand marks.
 
 PALETTES = {
     'dark': dict(bg='#0d1117', panel='#161c26', line='#303b4c', text='#ecf1fa',
@@ -159,34 +160,41 @@ def profile_graphics(data, rows, typewriter):
             output['assets/banner-static'+suffix] = hero(data,t,rows,static_portrait,mobile,tablet)
             output['assets/experience'+suffix] = approach(data,t,mobile,tablet)
             output['assets/perspective'+suffix] = perspective(data,t,mobile,tablet)
-            output['assets/toolkit'+suffix] = toolkit(t,mobile,tablet)
+            output['assets/toolkit'+suffix] = toolkit(data,t,mobile,tablet)
     return output
 
 
-def toolkit(t, mobile=False, tablet=False):
+def toolkit(data, t, mobile=False, tablet=False):
     w = (600 if tablet else 360) if mobile else 980
-    p = canvas(w, 330 if mobile else 228, 'Focus and tools',
-               'UX Design, System Planning and Prototyping. Tools: draw.io, Figma, Mermaid, AWS, Rhino and Adobe Creative Cloud.',t)
-    p.append(label('Focus',24 if mobile else 32,32,t['muted'],14))
-    focus = [('UX Design',88),('System Planning',122),('Prototyping',102)]
-    x = (w-sum(width for _,width in focus)-8)/2
-    for word,width in focus:
-        p.append(f'<rect x="{x}" y="48" width="{width}" height="32" rx="4" fill="{t["panel"]}"/>')
-        p.append(label(word,x+width/2,69,t['text'],13,600,anchor='middle'))
-        x += width+4
-    p.append(label('Tools & platforms',24 if mobile else 32,116,t['muted'],14))
+    tools = data['tools']
+    cols = 2 if mobile else 3
+    row_count = (len(tools)+cols-1)//cols
+    description = ', '.join(tool.get('accessible_name',tool['name']) for tool in tools)+'.'
+    p = canvas(w, 64+row_count*52, 'Tools I work with', description,t)
+    p.append(label('Tools I work with',24 if mobile else 32,34,t['muted'],18))
     ns = 'http://www.w3.org/2000/svg'
     ET.register_namespace('',ns)
-    cols = 2 if mobile else 3
-    cell_w = (w-48)/cols if mobile else 244
-    start_x = 24 if mobile else (w-cell_w*cols)/2
-    for i,name in enumerate(['drawio','figma','mermaid','aws','rhino','adobe']):
-        root = ET.parse(Path(__file__).resolve().parents[1]/f'assets/badge-{name}.svg').getroot()
-        bw = float(root.get('width'))
-        # SVG children remain editable paths/text, with original logo proportions.
-        group = ET.Element('{'+ns+'}g',{'transform':f'translate({start_x+(i%cols)*cell_w+(cell_w-bw)/2},{140+(i//cols)*54})'})
-        group.extend(list(root))
-        p.append(ET.tostring(group,encoding='unicode'))
+    cell_w = (w-48)/cols if mobile else (w-64)/cols
+    start_x = 24 if mobile else 32
+    assets = Path(__file__).resolve().parents[1]/'assets'
+    for i,tool in enumerate(tools):
+        name,title = tool['key'],tool['name']
+        x, y = start_x+(i%cols)*cell_w, 72+(i//cols)*52
+        p.append(f'<rect x="{x}" y="{y-4}" width="32" height="32" rx="5" fill="{t["panel"] if name == "aws" else ICON_SURFACE}"/>')
+        if (assets/f'icons/{name}.svg').exists():
+            icon = ET.parse(assets/f'icons/{name}.svg').getroot()
+            if name == 'aws':
+                p.append(f'<rect x="{x+2}" y="{y-2}" width="28" height="28" rx="3" fill="#fff"/>')
+        else:
+            badge = ET.parse(assets/f'badge-{name}.svg').getroot()
+            icon = badge.find('.//{'+ns+'}svg')
+        if icon is None:
+            raise ValueError(f'Missing icon for {name}')
+        icon.attrib.update(x=str(x+3),y=str(y-1),width='26',height='26')
+        p.append(ET.tostring(icon,encoding='unicode'))
+        lines = textwrap.wrap(title,12 if mobile else 26,break_long_words=False)
+        for j,line in enumerate(lines):
+            p.append(label(line,x+42,y+(8 if len(lines)>1 else 17)+j*21,t['text'],18,600))
     p.append('</svg>')
     return ''.join(p)
 
