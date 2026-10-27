@@ -14,7 +14,11 @@ img { max-width: 100%; height: auto; vertical-align: middle; }
 h1 { font-size: 32px; } h2 { font-size: 24px; margin: 24px 0 16px; }
 hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
 code { font-family: ui-monospace, monospace; background: var(--code); padding: 3px 6px; border-radius: 4px; font-size: .85em; }
-table { width: 100%; border-collapse: collapse; } td { border: 1px solid var(--line); padding: 8px; }
+table { width: 100%; border-collapse: collapse; } td, th { border: 1px solid var(--line); padding: 8px; }
+th { background: var(--code); }
+summary { cursor: pointer; }
+summary:focus-visible { outline: 2px solid #22d3ee; outline-offset: 4px; }
+blockquote { margin: 16px 0; padding: 0 16px; border-left: 4px solid var(--line); }
 li { margin: 8px 0; } a:focus-visible { outline: 2px solid #22d3ee; outline-offset: 4px; }
 @media (max-width: 600px) { main { margin: 0; padding: 16px; } h1 { font-size: 28px; } }
 </style>
@@ -25,11 +29,29 @@ li { margin: 8px 0; } a:focus-visible { outline: 2px solid #22d3ee; outline-offs
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg">
-  <img src="assets/banner-dark.svg" width="100%" alt="Eden Chang, Technical Product Manager. Animated ASCII portrait. Background: industrial design, metalwork and exhibition planning. Connects product planning, user experience and front-end implementation. How I work: problem framing, empathy, cross-functional communication and structured thinking.">
+  <img src="assets/banner-dark.svg" width="100%" alt="Eden Chang, Technical Product Manager. Animated ASCII portrait. Got my start in industrial design, metalwork and exhibition planning. My work starts with everyday problems and turns them into product plans. How I work: problem framing, empathy, cross-functional communication and structured thinking.">
 </picture>
-<br>
-<h1>Eden Chang</h1>
-<p><code>Technical Product Manager / Curious builder</code></p>
+</div>
+<p>Ever find yourself switching between tools just to finish one task? Or trying to follow a process that nobody has quite written down? Those are the kinds of things that get me curious.</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/experience-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/experience-light.svg">
+  <img src="assets/experience-dark.svg" width="100%" alt="How an idea takes shape: notice friction and understand people's needs; map requirements, workflows and system rules; explore the solution through prototypes and iteration.">
+</picture>
+<details>
+<summary><strong>Where do you start when something feels harder than it should?</strong></summary>
+<p>With the situation people are already in. Who is involved? What are they trying to do? Where do they get stuck? I work through those questions to clarify the need and decide which part is worth tackling first.</p>
+</details>
+<details>
+<summary><strong>How does a vague idea become a workable plan?</strong></summary>
+<p>By mapping the steps and making the rules explicit: what belongs in scope, who can do what, and how information moves. User flows, UML and architecture diagrams give everyone something specific to discuss, including what should happen when a step fails or gets interrupted.</p>
+</details>
+<details>
+<summary><strong>What happens once the plan is on paper?</strong></summary>
+<p>I use prototypes to explore how the experience would work and revisit the plan when practical constraints emerge. Hands-on experience with interfaces, system integration and AWS architecture and deployment helps me connect the proposed solution to what it would take to run it.</p>
+</details>
+<hr/>
+<div align="center">
 <table>
 <tr>
 <td width="50%" align="center">
@@ -48,10 +70,6 @@ li { margin: 8px 0; } a:focus-visible { outline: 2px solid #22d3ee; outline-offs
 </td>
 </tr>
 </table>
-</div>
-<hr />
-<div align="center">
-<p><sub><code>Curious builder / @eden0118</code></sub></p>
 </div>
 </main></body>
 </html>

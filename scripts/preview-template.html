@@ -14,7 +14,11 @@ img { max-width: 100%; height: auto; vertical-align: middle; }
 h1 { font-size: 32px; } h2 { font-size: 24px; margin: 24px 0 16px; }
 hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
 code { font-family: ui-monospace, monospace; background: var(--code); padding: 3px 6px; border-radius: 4px; font-size: .85em; }
-table { width: 100%; border-collapse: collapse; } td { border: 1px solid var(--line); padding: 8px; }
+table { width: 100%; border-collapse: collapse; } td, th { border: 1px solid var(--line); padding: 8px; }
+th { background: var(--code); }
+summary { cursor: pointer; }
+summary:focus-visible { outline: 2px solid #22d3ee; outline-offset: 4px; }
+blockquote { margin: 16px 0; padding: 0 16px; border-left: 4px solid var(--line); }
 li { margin: 8px 0; } a:focus-visible { outline: 2px solid #22d3ee; outline-offset: 4px; }
 @media (max-width: 600px) { main { margin: 0; padding: 16px; } h1 { font-size: 28px; } }
 </style>

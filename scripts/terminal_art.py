@@ -160,9 +160,41 @@ def stats(data,t):
     return ''.join(p)
 
 
+def experience(data, t):
+    items = data['experience']
+    description = ' '.join(f'{item["name"]}: {item["description"]}' for item in items)
+    p = start(980, 98 + len(items) * 128, 'How an idea takes shape', description, t)
+    p += [text('How an idea takes shape', 32, 43, t['text'], 24, weight='600'),
+          text('observe / map / explore', 32, 68, t['muted'], 12)]
+    for j in range(18):
+        x = 724 + j * 12
+        y = 29 + (j % 3) * 10
+        p.append(f'<rect x="{x}" y="{y}" width="{8 if j % 4 else 20}" height="6" fill="{t["accent"] if j % 3 else t["art"]}" opacity="{.35 + (j % 4) * .2}"/>')
+    for i, item in enumerate(items):
+        y = 98 + i * 128
+        p.append(f'<path d="M32 {y-8}H948" stroke="{t["line"]}"/>')
+        p.append(text(f'0{i+1}', 34, y + 22, t['accent'], 12))
+        p.append(f'<g transform="translate(76,{y+8})" fill="none" stroke="{t["art"]}" stroke-width="1.5">')
+        if i == 0:
+            p.append('<path d="M0 8h24v20H0zM64 0h28v20H64zM112 36h24v20h-24zM20 56h30v20H20zM24 18l40-8M78 20l34 26M50 66l62-20"/>')
+            p.append(f'<circle cx="77" cy="10" r="27" stroke="{t["accent"]}"/><path d="m96 30 18 18" stroke="{t["accent"]}"/>')
+        elif i == 1:
+            p.append('<path d="M0 32h32v24H0zM62 0h40v24H62zM62 64h40v24H62zM32 44h16V12h14M48 44v32h14M102 12h32v64h-32"/>')
+            p.append(f'<path d="M7 44h18M70 12h24M70 76h24" stroke="{t["accent"]}"/>')
+        else:
+            p.append('<rect x="0" y="5" width="116" height="74" rx="4"/><path d="M0 22h116M9 13h4m5 0h4m5 0h4M12 35h42v32H12zM65 37h36M65 47h29M65 57h20"/>')
+            p.append(f'<path d="m94 60 4 28 8-9 13-1zM134 20v-13h-16M134 7c24 20 22 57-4 72" fill="{t["panel"]}" stroke="{t["accent"]}"/>')
+        p.append('</g>')
+        p.append(text(item['name'], 264, y + 28, t['text'], 21, weight='600'))
+        p.append(text(item['description'], 264, y + 55, t['muted'], 14))
+        p.append(text(' / '.join(item['labels']), 264, y + 83, t['accent'], 12))
+    p.append('</svg>')
+    return ''.join(p)
+
+
 def graphics():
     data=json.loads((ROOT/'assets/profile.json').read_text())
-    return {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('banner',banner),('signals',signals),('roots',roots),('stats',stats)]}
+    return {f'assets/{name}-{theme}.svg': render(data,t) for theme,t in THEMES.items() for name,render in [('banner',banner),('signals',signals),('roots',roots),('stats',stats),('experience',experience)]}
 
 
 if __name__ == '__main__':
