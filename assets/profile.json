@@ -29,29 +29,28 @@
   },
   "intro": [
     "Hi, I'm Eden, a technical product manager.",
-    "I got my start in industrial design, metalwork and exhibition planning.",
-    "My work starts with everyday problems and turns them into product plans."
+    "My projects often begin where someone gets stuck: finding the right information, following a shared process, or choosing a tool for the job. I work through what they need and how the pieces fit together, then use diagrams and prototypes to explore a clearer way forward."
   ],
   "experience": [
     {
-      "name": "Notice the friction",
-      "description": "Repeated workarounds and scattered information make me curious. I look at who needs help and where the task gets difficult.",
+      "name": "Understand the situation",
+      "description": "Start with what someone is trying to do, what they already know, and where they need help. Different roles often need different paths through the same information.",
       "labels": [
         "People & context",
         "User experience"
       ]
     },
     {
-      "name": "Make the plan clear",
-      "description": "I clarify scope, permissions and exceptions, then use workflows and UML to make the plan easier to discuss.",
+      "name": "Work through the awkward parts",
+      "description": "Missing information, permissions and interrupted steps all affect the experience. I use workflows and diagrams to make those decisions explicit.",
       "labels": [
         "Requirements",
         "UML & architecture"
       ]
     },
     {
-      "name": "Try the idea",
-      "description": "Prototypes help me spot gaps and revisit the scope. System integration and AWS experience inform the practical side.",
+      "name": "Give the idea a form",
+      "description": "Prototypes make a proposed experience easier to examine. They help me spot gaps, reconsider the scope and work through practical constraints.",
       "labels": [
         "Prototyping",
         "System integration"
@@ -102,5 +101,16 @@
       "key": "aws",
       "name": "AWS"
     }
-  ]
+  ],
+  "headline": [
+    "Make the next",
+    "step clearer."
+  ],
+  "perspective": {
+    "heading": "A design perspective",
+    "paragraphs": [
+      "My design background taught me to think about how something fits into a person's surroundings and routines.",
+      "That perspective now shapes how I organize information, plan interactions and work through system behavior."
+    ]
+  }
 }

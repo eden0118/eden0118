@@ -9,7 +9,7 @@ individual projects. The ASCII character is the identifying visual.
 ```text
 ASCII portrait      Name / role / short positioning / background
 Observe             Plan                  Explore
-Shared decisions                         Design origins
+Design perspective                       Design origins
 ```
 
 The README uses one 980-unit desktop composition at every viewport width.
@@ -39,7 +39,7 @@ required.
 - One moving element: the ASCII portrait. Reduced motion selects a complete,
   static source at the parent `picture`, alongside the SVG's own media fallback.
 - Three process columns share a track rather than individual card borders.
-- Two conceptual diagrams share one panel. They do not express measured scores.
+- A short personal design perspective and an origins diagram share one panel.
 - The toolkit uses a fixed grid of equal-size icons with readable names, without capability pills or
   purpose captions. White brand marks use neutral backing; the AWS mark uses a
   light inset for its original dark lettering. Keep original symbol geometry.

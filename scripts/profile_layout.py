@@ -33,50 +33,21 @@ def canvas(w, h, title, desc, t):
             f'<rect width="{w}" height="{h}" rx="12" fill="{t["bg"]}"/>']
 
 
-def hero(data, t, rows, typewriter, mobile=False, tablet=False):
-    w, h = (600, 450) if tablet else (360, 640) if mobile else (980, 460)
-    p = canvas(w, h, data['subject'], ' '.join(data['intro']), t)
-    if tablet:
-        p.append(f'<rect x="20" y="40" width="252" height="378" rx="6" fill="{t["panel"]}"/>')
-        p.append('<g transform="translate(-5,20) scale(.62)">'+typewriter(rows,t)+'</g>')
-        p += [label(data['subject'],300,56,t['text'],20,600),
-              label(data['role'],300,82,t['muted'],16),
-              label('From everyday',300,143,t['text'],28,600),
-              label('friction to',300,177,t['text'],28,600),
-              label('something useful.',300,211,t['text'],28,600)]
-        y = 260
-        for value in data['intro'][1:]:
-            lines = textwrap.wrap(value,29)
-            p.append(paragraph(value,300,y,29,t,20,26))
-            y += len(lines)*26+12
-    elif mobile:
-        p += [label(data['subject'], 24, 32, t['text'], 18, 600),
-              label(data['role'], 24, 55, t['muted'], 14),
-              label('From everyday friction', 24, 103, t['text'], 28, 600),
-              label('to something useful.', 24, 138, t['text'], 28, 600)]
-        p.append(f'<rect x="20" y="166" width="{w-40}" height="230" rx="6" fill="{t["panel"]}"/>')
-        scale = .8 if tablet else .7
-        offset_x, offset_y = w/2-244*scale, 190-216*scale
-        p.append(f'<g transform="translate({offset_x},{offset_y}) scale({scale})">'+typewriter(rows,t)+'</g>')
-        y = 440
-        for value in data['intro'][1:]:
-            measure, size, leading = (42,24,32) if tablet else (29,20,28)
-            lines = textwrap.wrap(value, measure)
-            p.append(paragraph(value, 24, y, measure, t, size, leading))
-            y += len(lines) * leading + 16
-    else:
-        p.append(f'<rect x="24" y="24" width="392" height="412" rx="8" fill="{t["panel"]}"/>')
-        p += [label('eden / profile', 48, 58, t['muted'], 12, mono=True),
-              '<g transform="translate(-24,-68)">'+typewriter(rows,t)+'</g>',
-              label(data['subject'], 460, 63, t['text'], 20, 600),
-              label(data['role'], 460, 90, t['muted'], 16),
-              label('From everyday friction', 460, 170, t['text'], 38, 600),
-              label('to something useful.', 460, 216, t['text'], 38, 600)]
-        y = 280
-        for value in data['intro'][1:]:
-            lines = textwrap.wrap(value, 47)
-            p.append(paragraph(value, 460, y, 47, t, 19, 28))
-            y += len(lines) * 28 + 16
+def hero(data, t, rows, typewriter):
+    description = ' '.join(data['headline']+data['intro'])
+    p = canvas(980, 460, data['subject'], description, t)
+    p.append(f'<rect x="24" y="24" width="392" height="412" rx="8" fill="{t["panel"]}"/>')
+    p += [label('eden / profile', 48, 58, t['muted'], 12, mono=True),
+          '<g transform="translate(-24,-68)">'+typewriter(rows,t)+'</g>',
+          label(data['subject'],460,63,t['text'],20,600),
+          label(data['role'],460,90,t['muted'],16)]
+    for i,line in enumerate(data['headline']):
+        p.append(label(line,460,163+i*49,t['text'],44,600))
+    y = 260
+    for value in data['intro'][1:]:
+        lines = textwrap.wrap(value,47)
+        p.append(paragraph(value,460,y,47,t,19,27))
+        y += len(lines)*27+16
     p.append('</svg>')
     return ''.join(p)
 
@@ -100,7 +71,7 @@ def approach(data, t, mobile=False, tablet=False):
     desc = ' '.join(item['name']+': '+item['description'] for item in items)
     measure, size, leading = (42,24,34) if tablet else (28,20,30)
     row_heights = [len(textwrap.wrap(item['description'],measure))*leading+100 for item in items]
-    w, h = (600 if tablet else 360, 100+sum(row_heights)) if mobile else (980, 460)
+    w, h = (600 if tablet else 360, 100+sum(row_heights)) if mobile else (980, 520)
     p = canvas(w, h, 'How an idea takes shape', desc, t)
     p.append(label('How an idea takes shape', 24 if mobile else 32, 42, t['text'], 24, 600))
     if not mobile:
@@ -115,39 +86,27 @@ def approach(data, t, mobile=False, tablet=False):
         else:
             p.append(f'<circle cx="{x+8}" cy="{y}" r="5" fill="{t["accent"]}"/>')
             p.append(sketch(i, x+24, y+38, t, .72))
-            p.append(label(item['name'], x, y+154, t['text'], 23, 600))
-            p.append(paragraph(item['description'], x, y+187, 27, t, 20, 29))
+            heading = textwrap.wrap(item['name'],24)
+            for j,line in enumerate(heading):
+                p.append(label(line,x,y+154+j*28,t['text'],22,600))
+            p.append(paragraph(item['description'],x,y+187+(len(heading)-1)*28,28,t,20,28))
     p.append('</svg>')
     return ''.join(p)
 
 
-def perspective(data, t, mobile=False, tablet=False):
-    desc = 'Planning connects user needs, business priorities and technical feasibility. Design background: '+', '.join(data['background'])+'.'
-    w = (600 if tablet else 360) if mobile else 980
-    p = canvas(w, 568 if mobile and not tablet else 290, 'A design perspective', desc, t)
-    # Two related diagrams share one canvas instead of competing full-width cards.
-    if mobile and not tablet:
-        centers, origins = [(w/2, 152), (w/2, 416)], [(24, 36), (24, 310)]
-        p.append(f'<path d="M24 278H{w-24}" stroke="{t["line"]}"/>')
-    else:
-        centers, origins = ([(150,152),(450,152)],[(24,36),(324,36)]) if tablet else ([(242, 152), (734, 152)], [(32, 36), (524, 36)])
-        p.append(f'<path d="M{w/2} 32V258" stroke="{t["line"]}"/>')
-    x, y = origins[0]
-    p.append(label('A shared plan', x, y, t['text'], 22, 600))
-    cx, cy = centers[0]
-    points = [(cx,cy-55,'People','Needs'),(cx-104,cy+53,'Purpose','Priorities'),(cx+104,cy+53,'Practice','Feasibility')]
-    p.append(f'<path d="M{cx} {cy-55} {cx-104} {cy+53}H{cx+104}Z" stroke="{t["line"]}" fill="none"/>')
-    for i,(nx,ny,word,caption) in enumerate(points):
-        p.append(f'<path d="M{cx} {cy+8}L{nx} {ny}" stroke="{t["art"]}"/>')
-        p.append(f'<circle cx="{nx}" cy="{ny}" r="4" fill="{t["accent"]}"/>')
-        # Keep captions outside the triangle so its edges do not cross text.
-        title_y, caption_y = (ny-36,ny-15) if i == 0 else (ny+25,ny+45)
-        p += [label(word,nx,title_y,t['text'],18 if mobile and not tablet else 16,600,anchor='middle'),label(caption,nx,caption_y,t['muted'],16 if mobile and not tablet else 14,anchor='middle')]
-    p.append(f'<rect x="{cx-45}" y="{cy-7}" width="90" height="29" rx="4" fill="{t["panel"]}"/>')
-    p.append(label('Decisions',cx,cy+13,t['text'],14,anchor='middle'))
-    x,y = origins[1]
+def perspective(data, t):
+    note = data['perspective']
+    desc = ' '.join(note['paragraphs'])+' Design background: '+', '.join(data['background'])+'.'
+    p = canvas(980,290,'A design perspective',desc,t)
+    p.append(label(note['heading'],32,36,t['text'],22,600))
+    y = 82
+    for value in note['paragraphs']:
+        lines = textwrap.wrap(value,46)
+        p.append(paragraph(value,32,y,46,t,19,27))
+        y += len(lines)*27+14
+    p.append(f'<path d="M490 32V258" stroke="{t["line"]}"/>')
+    x,y,cx,cy = 524,36,734,152
     p.append(label('Where I started', x, y, t['text'], 22, 600))
-    cx,cy = centers[1]
     p.append(f'<path d="M{cx-104} {cy}H{cx+104}" stroke="{t["line"]}"/>')
     for j,(title,words) in enumerate([('Form',['Industrial','design']),('Material',['Metalwork']),('Space',['Exhibition','planning'])]):
         nx = cx-104+j*104
